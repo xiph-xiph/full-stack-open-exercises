@@ -1,15 +1,28 @@
 import { useState } from 'react'
 
-const StatisticLine = ({text, value}) => {
-  return (
-    <p>{text}: {value}</p>
-  )
+const StatisticLine = ({text, value, showPercentage=false}) => {
+  
+  if (showPercentage) {
+    return (
+      <tr>
+        <td>{text}</td>
+        <td>{value} %</td>
+      </tr>
+    )
+  } else {
+    return (
+      <tr>
+        <td>{text}</td>
+        <td>{value}</td>
+      </tr>
+    )
+  }
 }
 
 const Statistics = ({good, neutral, bad}) => {
   const all = good + neutral + bad
-  const average =  (good - bad) / all
-  const positive = good / (all) * 100
+  const average =  ((good - bad) / all).toFixed(2)
+  const positive = (good / (all) * 100).toFixed(2)
 
   if (all === 0) {
     return (
@@ -22,12 +35,16 @@ const Statistics = ({good, neutral, bad}) => {
     return (
       <>
         <h1>statistics</h1>
-        <StatisticLine text={'good'} value={good} />
-        <StatisticLine text={'neutral'} value={neutral} />
-        <StatisticLine text={'bad'} value={bad} />
-        <StatisticLine text={'all'} value={all} />
-        <StatisticLine text={'average'} value={average} />
-        <StatisticLine text={'positive'} value={positive} />
+        <table>
+          <tbody>
+            <StatisticLine text={'good'} value={good} />
+            <StatisticLine text={'neutral'} value={neutral} />
+            <StatisticLine text={'bad'} value={bad} />
+            <StatisticLine text={'all'} value={all} />
+            <StatisticLine text={'average'} value={average} />
+            <StatisticLine text={'positive'} value={positive} showPercentage={true} />
+          </tbody>
+        </table>
       </>
     )
   }
