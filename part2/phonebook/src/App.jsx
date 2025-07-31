@@ -1,4 +1,8 @@
 import { useState } from 'react'
+import NumberForm from './components/NumberForm'
+import Filter from './components/Filter'
+import PersonList from './components/PersonList'
+
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -6,10 +10,10 @@ const App = () => {
     { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
     { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
     { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
-  ]) 
+  ])
+  const [nameFilter, setFilter] = useState('')
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
-  const [nameFilter, setFilter] = useState('')
 
   const filteredPersons = persons.filter((person) => person.name.includes(nameFilter))
 
@@ -20,10 +24,10 @@ const App = () => {
   const handleNameChange = (event) => {
     setNewName(event.target.value)
   }
-  
+
   const handleNumberChange = (event) => {
     const invalidPhoneNumberPattern = /[^\d-]/ // includes any character other than a digit or -
-    if (invalidPhoneNumberPattern.test(event.target.value)){
+    if (invalidPhoneNumberPattern.test(event.target.value)) {
       alert("Phone number can only include digits or '-'.")
     } else {
       setNewNumber(event.target.value)
@@ -38,7 +42,7 @@ const App = () => {
       alert(`${newName} is already added to the phonebook`)
       return
     }
-    
+
     setPersons(persons.concat({
       name: newName,
       number: newNumber,
@@ -46,22 +50,16 @@ const App = () => {
     }))
     setNewName('')
     setNewNumber('')
-    setFilteredPersons(persons.filter((person) => person.name.includes(nameFilter)))
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>filter shown with: <input value={nameFilter} onChange={handleFilterChange}/></div>
+      <Filter nameFilter={nameFilter} handleFilterChange={handleFilterChange}/>
       <h2>Add new number</h2>
-      <form onSubmit={handleSubmit}>
-        <div>name: <input value={newName} onChange={handleNameChange}/></div>
-        <div>number: <input value={newNumber} onChange={handleNumberChange}/></div>
-        <div><button type="submit">add</button></div>
-      </form>
+      <NumberForm handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} handleSubmit={handleSubmit} newName={newName} newNumber={newNumber} />
       <h2>Numbers</h2>
-      {filteredPersons.map((person) => <div key={person.id}>{person.name} {person.number}</div>)}
-      <div>debug: {newName} {newNumber}</div>
+      <PersonList persons={filteredPersons}/>
     </div>
   )
 }
