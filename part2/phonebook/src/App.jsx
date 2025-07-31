@@ -11,6 +11,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [feedbackMessage, setFeedbackMessage] = useState('')
+  const [feedbackIsError, setFeedbackError] = useState(false)
 
   useEffect(() => {
     personService
@@ -54,9 +55,20 @@ const App = () => {
             setNewName('')
             setNewNumber('')
             setFeedbackMessage(`Changed ${existingPerson.name}'s number to ${response.data.number}.`)
+            setFeedbackError(false)
             setTimeout(() => {
               setFeedbackMessage('')
-            }, 1500);
+            }, 1500)
+          })
+          .catch((error) => {
+            setFeedbackMessage(`${existingPerson.name} was already removed from the phonebook`)
+            setFeedbackError(true)
+            setTimeout(() => {
+              setFeedbackMessage('')
+            }, 1500)
+            setPersons(persons.filter((person) =>
+              person.id !== existingPerson.id
+            ))
           })
       }
       return
@@ -74,6 +86,7 @@ const App = () => {
         setNewName('')
         setNewNumber('')
         setFeedbackMessage(`Added ${response.data.name} to the phonebook.`)
+        setFeedbackError(false)
         setTimeout(() => {
           setFeedbackMessage('')
         }, 1500);
@@ -88,9 +101,20 @@ const App = () => {
         .then((response) => {
           setPersons(persons.filter((person) => person.id !== response.data.id))
           setFeedbackMessage(`Removed ${response.data.name} from the phonebook.`)
+          setFeedbackError(false)
           setTimeout(() => {
             setFeedbackMessage('')
           }, 1500);
+        })
+        .catch((error) => {
+          setFeedbackMessage(`${personToDelete.name} was already removed from the phonebook`)
+          setFeedbackError(true)
+          setTimeout(() => {
+            setFeedbackMessage('')
+          }, 1500)
+          setPersons(persons.filter((person) =>
+            person.id !== personToDelete.id
+          ))
         })
     }
   }
@@ -98,7 +122,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <FeedbackMessage message={feedbackMessage} />
+      <FeedbackMessage message={feedbackMessage} isError={feedbackIsError} />
       <Filter nameFilter={nameFilter} handleFilterChange={handleFilterChange} />
       <h2>Add new number</h2>
       <NumberForm handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} handleSubmit={handleSubmit} newName={newName} newNumber={newNumber} />

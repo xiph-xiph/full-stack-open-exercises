@@ -1,6 +1,6 @@
-const FeedbackMessage = ({ message }) => {
+const FeedbackMessage = ({ message, isError=false }) => {
   const messageStyle = {
-    color: 'green',
+    color: isError? 'red': 'green',
     background: 'lightgrey',
     fontSize: 20,
     borderStyle: 'solid',
