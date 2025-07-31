@@ -24,11 +24,12 @@ const Content = ({parts}) => {
 };
 
 const Total = ({parts}) => {
-  const numberOfExercises = parts[0].exercises + parts[1].exercises + parts[2].exercises
+  let numberOfExercises = 0
+  parts.forEach(part => numberOfExercises += part.exercises)
   return (
-    <p>
-      Number of exercises {numberOfExercises}
-    </p>
+    <b>
+      Total of {numberOfExercises} exercises
+    </b>
   );
 };
 
@@ -36,6 +37,7 @@ const Course = ({course}) => (
   <>
     <Header course={course.name} />
     <Content parts={course.parts} />
+    <Total parts={course.parts} />
   </>
 )
 
