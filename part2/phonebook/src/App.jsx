@@ -3,13 +3,14 @@ import personService from './services/persons'
 import NumberForm from './components/NumberForm'
 import Filter from './components/Filter'
 import PersonList from './components/PersonList'
-
+import FeedbackMessage from './components/FeedbackMessage'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [nameFilter, setFilter] = useState('')
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [feedbackMessage, setFeedbackMessage] = useState('')
 
   useEffect(() => {
     personService
@@ -52,6 +53,10 @@ const App = () => {
             ))
             setNewName('')
             setNewNumber('')
+            setFeedbackMessage(`Changed ${existingPerson.name}'s number to ${response.data.number}.`)
+            setTimeout(() => {
+              setFeedbackMessage('')
+            }, 1500);
           })
       }
       return
@@ -68,6 +73,10 @@ const App = () => {
         setPersons(persons.concat(response.data))
         setNewName('')
         setNewNumber('')
+        setFeedbackMessage(`Added ${response.data.name} to the phonebook.`)
+        setTimeout(() => {
+          setFeedbackMessage('')
+        }, 1500);
       })
 
   }
@@ -78,6 +87,10 @@ const App = () => {
         .deletePerson(personToDelete)
         .then((response) => {
           setPersons(persons.filter((person) => person.id !== response.data.id))
+          setFeedbackMessage(`Removed ${response.data.name} from the phonebook.`)
+          setTimeout(() => {
+            setFeedbackMessage('')
+          }, 1500);
         })
     }
   }
@@ -85,6 +98,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <FeedbackMessage message={feedbackMessage} />
       <Filter nameFilter={nameFilter} handleFilterChange={handleFilterChange} />
       <h2>Add new number</h2>
       <NumberForm handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} handleSubmit={handleSubmit} newName={newName} newNumber={newNumber} />
