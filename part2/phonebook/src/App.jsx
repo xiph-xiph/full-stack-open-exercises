@@ -13,7 +13,7 @@ const App = () => {
 
   useEffect(() => {
     personService
-      .getAll()
+      .getAllPersons()
       .then(response => {
         setPersons(response.data)
       })
@@ -53,13 +53,23 @@ const App = () => {
     }
 
     personService
-      .create(newPerson)
+      .createPerson(newPerson)
       .then((response) => {
         setPersons(persons.concat(response.data))
         setNewName('')
         setNewNumber('')
       })
 
+  }
+
+  const handleDelete = (personToDelete) => {
+    if (window.confirm(`Are you sure you want to delete ${personToDelete.name} from the phonebook?`)) {
+      personService
+        .deletePerson(personToDelete)
+        .then((response) => {
+          setPersons(persons.filter((person) => person.id !== response.data.id))
+        })
+    }
   }
 
   return (
@@ -69,7 +79,7 @@ const App = () => {
       <h2>Add new number</h2>
       <NumberForm handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} handleSubmit={handleSubmit} newName={newName} newNumber={newNumber} />
       <h2>Numbers</h2>
-      <PersonList persons={filteredPersons} />
+      <PersonList persons={filteredPersons} handleDelete={handleDelete} />
     </div>
   )
 }
