@@ -13,10 +13,10 @@ const App = () => {
 
   useEffect(() => {
     axios
-    .get('http://localhost:3001/persons')
-    .then(response => {
-      setPersons(response.data)
-    })
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        setPersons(response.data)
+      })
   }, [])
 
   const filteredPersons = persons.filter((person) => person.name.includes(nameFilter))
@@ -47,23 +47,29 @@ const App = () => {
       return
     }
 
-    setPersons(persons.concat({
+    const newPerson = {
       name: newName,
-      number: newNumber,
-      id: persons.length + 1
-    }))
-    setNewName('')
-    setNewNumber('')
+      number: newNumber
+    }
+
+    axios
+      .post('http://localhost:3001/persons', newPerson)
+      .then((response) => {
+        setPersons(persons.concat(response.data))
+        setNewName('')
+        setNewNumber('')
+      })
+
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <Filter nameFilter={nameFilter} handleFilterChange={handleFilterChange}/>
+      <Filter nameFilter={nameFilter} handleFilterChange={handleFilterChange} />
       <h2>Add new number</h2>
       <NumberForm handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} handleSubmit={handleSubmit} newName={newName} newNumber={newNumber} />
       <h2>Numbers</h2>
-      <PersonList persons={filteredPersons}/>
+      <PersonList persons={filteredPersons} />
     </div>
   )
 }
