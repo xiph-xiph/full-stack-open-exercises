@@ -24,11 +24,10 @@ const Content = ({parts}) => {
 };
 
 const Total = ({parts}) => {
-  let numberOfExercises = 0
-  parts.forEach(part => numberOfExercises += part.exercises)
+  const totalNumberOfExercises = parts.reduce((sum, part) => sum + part.exercises, 0)
   return (
     <b>
-      Total of {numberOfExercises} exercises
+      Total of {totalNumberOfExercises} exercises
     </b>
   );
 };
