@@ -1,33 +1,12 @@
-import CountryDetails from './CountryDetails'
-
-const CountryList = ({ countryData }) => {
-
-  if (countryData === null) {
-    return (
-      <div>Loading countries...</div>
-    )
-  }
-
-  if (countryData.length > 10) {
-    return (
-      <div>Too many matches, please specify your filter</div>
-    )
-  }
-
-  if (countryData.length === 0) {
-    return (
-      <div>No country matches the filter</div>
-    )
-  }
-
-  if (countryData.length > 1) {
-    return (
-      countryData.map((country) => <div key={country.id}>{country.name.common}</div>)
-    )
-  }
-
-  return <CountryDetails country={countryData[0]} />
+const CountryList = ({countryData, handleClickShow}) => {
+  return (
+    <div>
+      {countryData.map((country) => (
+        <div key={country.name.common} >{country.name.common} <button onClick={() => handleClickShow(country)}>show</button></div>
+      ))
+      }
+    </div>
+  )
 }
-
 
 export default CountryList

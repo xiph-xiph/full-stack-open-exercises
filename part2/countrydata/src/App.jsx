@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import countryService from './services/countries'
 import Filter from './components/Filter'
-import CountryList from './components/CountryList'
+import CountryView from './components/CountryView'
 
 function App() {
   const [filterValue, setFilterValue] = useState('')
@@ -26,7 +26,7 @@ function App() {
   return (
     <>
       <Filter handleFilterChange={handleFilterChange} />
-      <CountryList countryData={filteredCountryData} />
+      <CountryView countryData={filteredCountryData} />
     </>
   )
 }
