@@ -36,6 +36,15 @@ app.get('/api/persons', (request, response) => {
 })
 
 app.post('/api/persons', (request, response) => {
+  if (!request.body.name || !request.body.number) {
+    response.status(400).json({error: "Request must include both a name and a number"})
+    return
+  }
+  const foundPerson = persons.find((person) => person.name === request.body.name)
+  if (foundPerson) {
+    response.status(400).json({error: `${request.body.name} is already in the phonebook`})
+    return
+  }
   let id = Math.floor(Math.random() * 1000000000)
   persons.push({...request.body, id: id})
   response.json(request.body)

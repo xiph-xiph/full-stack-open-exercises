@@ -5,3 +5,19 @@ Content-Type: application/json
   "name": "Barack Obama",
   "number": "1-800-123-4567"
 }
+
+###
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+  "name": "George Washington"
+}
+
+###
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+  "number": "666-666-666"
+}
