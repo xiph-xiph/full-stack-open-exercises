@@ -2,7 +2,7 @@ import express from 'express'
 
 const app = express()
 
-const notes = [
+const persons = [
   {
     "id": "1",
     "name": "Arto Hellas",
@@ -26,11 +26,20 @@ const notes = [
 ]
 
 app.get('/info', (request, response) => {
-  response.send(`<div>Phonebook has info for ${notes.length} people</div> <div>${new Date()}</div>`)
+  response.send(`<div>Phonebook has info for ${persons.length} people</div> <div>${new Date()}</div>`)
 })
 
 app.get('/api/persons', (request, response) => {
-  response.json(notes)
+  response.json(persons)
+})
+
+app.get('/api/persons/:id', (request, response) => {
+  const foundPerson = persons.find((note) => note.id === request.params.id)
+  if (foundPerson) {
+    response.json(foundPerson)
+  } else {
+    response.status(404).end()
+  }
 })
 
 const PORT = 3001
