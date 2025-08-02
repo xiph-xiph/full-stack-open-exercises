@@ -4,6 +4,7 @@ import morgan from 'morgan'
 const app = express()
 
 app.use(express.json())
+app.use(express.static('dist'))
 
 const logger = morgan((tokens, request, response) => (
   [
@@ -60,8 +61,9 @@ app.post('/api/persons', (request, response) => {
     return
   }
   let id = Math.floor(Math.random() * 1000000000)
-  persons.push({...request.body, id: id})
-  response.json(request.body)
+  const newPerson = {...request.body, id: String(id)}
+  persons.push(newPerson)
+  response.json(newPerson)
 })
 
 app.get('/api/persons/:id', (request, response) => {
@@ -79,8 +81,8 @@ app.delete('/api/persons/:id', (request, response) => {
     response.status(404).end()
     return
   }
-  persons.splice(indexToDelete, 1)
-  response.status(204).end()
+  const deletedPerson = persons.splice(indexToDelete, 1)[0]
+  response.json(deletedPerson)
 })
 
 const PORT = 3001
