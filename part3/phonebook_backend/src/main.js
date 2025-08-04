@@ -89,6 +89,18 @@ app.get('/api/persons/:id', (request, response) => {
   response.json(foundPerson)
 })
 
+app.put('/api/persons/:id', (request, response, next) => {
+  Person.findByIdAndUpdate(request.params.id, {number: request.body.number}, {new: true})
+    .then((updatedPerson) => {
+      if (!updatedPerson) {
+        response.status(404).end()
+        return
+      }
+      response.json(updatedPerson)
+    })
+    .catch(error => next(error))
+})
+
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
     .then((deletedPerson) => {
