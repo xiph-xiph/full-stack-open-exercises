@@ -4,8 +4,10 @@
   "type": "module",
   "main": "./src/index.js",
   "scripts": {
-    "dev": "node --watch --inspect ./src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node .",
+    "dev": "node --watch --inspect .",
+    "test": "node --test",
+    "lint": "eslint ."
   },
   "author": "",
   "license": "MIT",
