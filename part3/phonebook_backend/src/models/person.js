@@ -1,13 +1,13 @@
-import mongoose from "mongoose"
+import mongoose from 'mongoose'
 
-mongoose.set("strictQuery", false)
+mongoose.set('strictQuery', false)
 
 const url = process.env.MONGODB_URI
 
 
 mongoose.connect(url)
-  .then((response) => {
-    console.log("Succesfully connected to database.")
+  .then(() => {
+    console.log('Succesfully connected to database.')
   })
   .catch((error) => {
     console.log(`Could not connect to database: ${error}`)
@@ -35,13 +35,16 @@ const personSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    minLength: 3},
+    minLength: 3
+  },
   number: {
     type: String,
     required: true,
     validate: {
       validator: isValidNumber,
-      message: props => `${props.value} is not a valid phone number.`}}
+      message: props => `${props.value} is not a valid phone number.`
+    }
+  }
 })
 
 personSchema.set('toJSON', {

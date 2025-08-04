@@ -27,7 +27,7 @@ app.get('/info', (request, response, next) => {
       response.send(`<div>Phonebook has info for ${result.length} people</div> <div>${new Date()}</div>`)
     })
     .catch(error => next(error))
-    
+
 })
 
 app.get('/api/persons', (request, response, next) => {
@@ -39,10 +39,10 @@ app.get('/api/persons', (request, response, next) => {
 })
 
 app.post('/api/persons', (request, response, next) => {
-  Person.findOne({ name: request.body.name})
+  Person.findOne({ name: request.body.name })
     .then(result => {
       if (result) {
-        response.status(400).json({error: `${request.body.name} is already in the phonebook`})
+        response.status(400).json({ error: `${request.body.name} is already in the phonebook` })
         return
       }
       const newPerson = new Person({
@@ -71,7 +71,7 @@ app.get('/api/persons/:id', (request, response, next) => {
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
-  Person.findByIdAndUpdate(request.params.id, {number: request.body.number}, {new: true, runValidators: true})
+  Person.findByIdAndUpdate(request.params.id, { number: request.body.number }, { new: true, runValidators: true })
     .then((updatedPerson) => {
       if (!updatedPerson) {
         response.status(404).end()
