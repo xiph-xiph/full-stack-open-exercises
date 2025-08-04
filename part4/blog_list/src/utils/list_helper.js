@@ -38,9 +38,33 @@ const mostBlogs = (blogs) => {
   }
 }
 
+const mostLikes = (blogs) => {
+  const authorLikes = {}
+  blogs.forEach((blog) => {
+    if (blog.author in authorLikes) {
+      authorLikes[blog.author] += blog.likes
+    } else {
+      authorLikes[blog.author] = blog.likes
+    }
+  })
+
+  const topLikedAuthor = Object.entries(authorLikes)
+    .reduce((previous, current) => (
+      previous[1] < current[1]
+        ? current
+        : previous
+    ), ['john', -1])
+
+  return {
+    author: topLikedAuthor[0],
+    likes: topLikedAuthor[1]
+  }
+}
+
 export default {
   dummy,
   totalLikes,
   favoriteBlog,
-  mostBlogs
+  mostBlogs,
+  mostLikes
 }
