@@ -60,15 +60,21 @@ app.post('/api/persons', (request, response) => {
     response.status(400).json({error: "Request must include both a name and a number"})
     return
   }
-  const foundPerson = persons.find((person) => person.name === request.body.name)
-  if (foundPerson) {
-    response.status(400).json({error: `${request.body.name} is already in the phonebook`})
-    return
-  }
-  let id = Math.floor(Math.random() * 1000000000)
-  const newPerson = {...request.body, id: String(id)}
-  persons.push(newPerson)
-  response.json(newPerson)
+  Person.find({ name: request.body.name})
+    .then(result => {
+      if (result.length > 0) {
+        response.status(400).json({error: `${request.body.name} is already in the phonebook`})
+        return
+      }
+      const newPerson = new Person({
+        name: request.body.name,
+        number: request.body.number
+      })
+      newPerson.save()
+        .then(result => {
+          response.json(result)
+        })
+    })
 })
 
 app.get('/api/persons/:id', (request, response) => {
