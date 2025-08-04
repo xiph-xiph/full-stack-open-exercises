@@ -21,3 +21,12 @@ Content-Type: application/json
 {
   "number": "666-666-666"
 }
+
+###
+
+DELETE http://localhost:3001/api/persons/invalidID
+Content-Type: application/json
+
+{
+  "id": "Invalid"
+}

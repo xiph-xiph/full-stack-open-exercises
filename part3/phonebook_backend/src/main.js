@@ -48,14 +48,15 @@ app.get('/info', (request, response) => {
   response.send(`<div>Phonebook has info for ${persons.length} people</div> <div>${new Date()}</div>`)
 })
 
-app.get('/api/persons', (request, response) => {
+app.get('/api/persons', (request, response, next) => {
   Person.find({})
     .then(result => {
       response.json(result)
     })
+    .catch(error => next(error))
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
   if (!request.body.name || !request.body.number) {
     response.status(400).json({error: "Request must include both a name and a number"})
     return
@@ -74,7 +75,9 @@ app.post('/api/persons', (request, response) => {
         .then(result => {
           response.json(result)
         })
+        .catch(error => next(error))
     })
+    .catch(error => next(error))
 })
 
 app.get('/api/persons/:id', (request, response) => {
@@ -86,16 +89,30 @@ app.get('/api/persons/:id', (request, response) => {
   response.json(foundPerson)
 })
 
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
-    .then((dbResponse) => {
-      if (!dbResponse) {
+    .then((deletedPerson) => {
+      if (!deletedPerson) {
         response.status(404).end()
         return
       }
-      response.json(dbResponse)
+      response.json(deletedPerson)
     })
+    .catch(error => next(error))
 })
+
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  }
+
+  next(error)
+}
+
+app.use(errorHandler)
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
