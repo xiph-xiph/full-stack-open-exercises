@@ -60,9 +60,9 @@ app.post('/api/persons', (request, response) => {
     response.status(400).json({error: "Request must include both a name and a number"})
     return
   }
-  Person.find({ name: request.body.name})
+  Person.findOne({ name: request.body.name})
     .then(result => {
-      if (result.length > 0) {
+      if (result) {
         response.status(400).json({error: `${request.body.name} is already in the phonebook`})
         return
       }
@@ -87,13 +87,14 @@ app.get('/api/persons/:id', (request, response) => {
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-  const indexToDelete = persons.findIndex((person) => person.id === request.params.id)
-  if (indexToDelete === -1) {
-    response.status(404).end()
-    return
-  }
-  const deletedPerson = persons.splice(indexToDelete, 1)[0]
-  response.json(deletedPerson)
+  Person.findByIdAndDelete(request.params.id)
+    .then((dbResponse) => {
+      if (!dbResponse) {
+        response.status(404).end()
+        return
+      }
+      response.json(dbResponse)
+    })
 })
 
 const PORT = process.env.PORT
