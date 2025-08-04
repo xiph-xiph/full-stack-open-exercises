@@ -1,5 +1,7 @@
+import 'dotenv/config'
 import express from 'express'
 import morgan from 'morgan'
+import Person from './models/person.js'
 
 const app = express()
 
@@ -47,7 +49,10 @@ app.get('/info', (request, response) => {
 })
 
 app.get('/api/persons', (request, response) => {
-  response.json(persons)
+  Person.find({})
+    .then(result => {
+      response.json(result)
+    })
 })
 
 app.post('/api/persons', (request, response) => {
@@ -85,7 +90,7 @@ app.delete('/api/persons/:id', (request, response) => {
   response.json(deletedPerson)
 })
 
-const PORT = 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server is now running on port ${PORT}`)
 })
