@@ -21,31 +21,13 @@ const logger = morgan((tokens, request, response) => (
 
 app.use(logger)
 
-const persons = [
-  {
-    "id": "1",
-    "name": "Arto Hellas",
-    "number": "040-123456"
-  },
-  {
-    "id": "2",
-    "name": "Ada Lovelace",
-    "number": "39-44-5323523"
-  },
-  {
-    "id": "3",
-    "name": "Dan Abramov",
-    "number": "12-43-234345"
-  },
-  {
-    "id": "4",
-    "name": "Mary Poppendieck",
-    "number": "39-23-6423122"
-  }
-]
-
-app.get('/info', (request, response) => {
-  response.send(`<div>Phonebook has info for ${persons.length} people</div> <div>${new Date()}</div>`)
+app.get('/info', (request, response, next) => {
+  Person.find({})
+    .then(result => {
+      response.send(`<div>Phonebook has info for ${result.length} people</div> <div>${new Date()}</div>`)
+    })
+    .catch(error => next(error))
+    
 })
 
 app.get('/api/persons', (request, response, next) => {
@@ -80,13 +62,16 @@ app.post('/api/persons', (request, response, next) => {
     .catch(error => next(error))
 })
 
-app.get('/api/persons/:id', (request, response) => {
-  const foundPerson = persons.find((person) => person.id === request.params.id)
-  if (!foundPerson) {
-    response.status(404).end()
-    return
-  }
-  response.json(foundPerson)
+app.get('/api/persons/:id', (request, response, next) => {
+  Person.findById(request.params.id)
+    .then((foundPerson) => {
+      if (!foundPerson) {
+        response.status(404).end()
+        return
+      }
+      response.json(foundPerson)
+    })
+    .catch(error => next(error))
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
