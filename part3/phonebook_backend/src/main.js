@@ -39,10 +39,6 @@ app.get('/api/persons', (request, response, next) => {
 })
 
 app.post('/api/persons', (request, response, next) => {
-  if (!request.body.name || !request.body.number) {
-    response.status(400).json({error: "Request must include both a name and a number"})
-    return
-  }
   Person.findOne({ name: request.body.name})
     .then(result => {
       if (result) {
@@ -75,7 +71,7 @@ app.get('/api/persons/:id', (request, response, next) => {
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
-  Person.findByIdAndUpdate(request.params.id, {number: request.body.number}, {new: true})
+  Person.findByIdAndUpdate(request.params.id, {number: request.body.number}, {new: true, runValidators: true})
     .then((updatedPerson) => {
       if (!updatedPerson) {
         response.status(404).end()
@@ -103,7 +99,9 @@ const errorHandler = (error, request, response, next) => {
   console.error(error.message)
 
   if (error.name === 'CastError') {
-    return response.status(400).send({ error: 'malformatted id' })
+    return response.status(400).json({ error: 'malformatted id' })
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
   }
 
   next(error)

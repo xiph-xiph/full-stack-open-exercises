@@ -34,7 +34,12 @@ const App = () => {
   const handleNumberChange = (event) => {
     const invalidPhoneNumberPattern = /[^\d-]/ // includes any character other than a digit or -
     if (invalidPhoneNumberPattern.test(event.target.value)) {
-      alert("Phone number can only include digits or '-'.")
+      setFeedbackError(true)
+      setFeedbackMessage("Phone number can only include digits or '-'.")
+      setTimeout(() => {
+        setFeedbackError(false)
+        setFeedbackMessage('')
+      }, 1500)
     } else {
       setNewNumber(event.target.value)
     }
@@ -61,9 +66,10 @@ const App = () => {
             }, 1500)
           })
           .catch((error) => {
-            setFeedbackMessage(`${existingPerson.name} was already removed from the phonebook`)
+            setFeedbackMessage(`Error: ${error}`)
             setFeedbackError(true)
             setTimeout(() => {
+              setFeedbackError(false)
               setFeedbackMessage('')
             }, 1500)
             setPersons(persons.filter((person) =>
@@ -91,6 +97,14 @@ const App = () => {
           setFeedbackMessage('')
         }, 1500);
       })
+      .catch((error) => {
+        setFeedbackError(true)
+        setFeedbackMessage(`Error: ${error}`)
+        setTimeout(() => {
+          setFeedbackError(false)
+          setFeedbackMessage('')
+        }, 1500);
+      })
 
   }
 
@@ -110,6 +124,7 @@ const App = () => {
           setFeedbackMessage(`${personToDelete.name} was already removed from the phonebook`)
           setFeedbackError(true)
           setTimeout(() => {
+            setFeedbackError(false)
             setFeedbackMessage('')
           }, 1500)
           setPersons(persons.filter((person) =>
