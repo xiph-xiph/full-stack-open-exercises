@@ -17,4 +17,22 @@ blogsRouter.post('/', async (request, response) => {
   logger.info(`Added ${result.title} to the database.`)
 })
 
+blogsRouter.get('/:id', async (request, response) => {
+  const blogFound = await Blog.findById(request.params.id)
+  if (blogFound) {
+    response.json(blogFound)
+  } else {
+    response.status(404).end()
+  }
+})
+
+blogsRouter.delete('/:id', async (request, response) => {
+  const deletedBlog = await Blog.findByIdAndDelete(request.params.id)
+  if (deletedBlog) {
+    response.status(204).end()
+  } else {
+    response.status(404).end()
+  }
+})
+
 export default blogsRouter

@@ -69,6 +69,57 @@ test('when title or url properties are missing from the request data, the respon
     .expect(400)
 })
 
+test('HTTP GET request returns a blog post specified by ID', async () => {
+  const blogs = await api.get('/api/blogs')
+  const blogToGet = blogs.body[0]
+  const response = await api.get(`/api/blogs/${blogToGet.id}`)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+  assert.deepStrictEqual(response.body, blogToGet)
+})
+
+test('HTTP GET request returns 404 when the resource with provided ID does not exist', async () => {
+  const nonexistentId = '000000000000000000000000'
+  await api.get(`/api/blogs/${nonexistentId}`)
+    .expect(404)
+})
+
+test('HTTP GET request returns 400 when the provided ID is malformatted', async () => {
+  const malformattedId = 'ThisIdIsMalformatted'
+  await api.get(`/api/blogs/${malformattedId}`)
+    .expect(400)
+})
+
+test('HTTP DELETE request successfully deletes the blog post specified by ID', async () => {
+
+  const blogsBeforeDelete = await api.get('/api/blogs')
+
+  const blogToDelete = blogsBeforeDelete.body[0]
+
+  await api.delete(`/api/blogs/${blogToDelete.id}`)
+    .expect(204)
+
+  const blogsAfterDelete = await api.get('/api/blogs')
+
+  assert.strictEqual(blogsBeforeDelete.body.length - 1, blogsAfterDelete.body.length)
+
+  const remainingIds = blogsAfterDelete.body.map(blog => blog.id)
+  assert.ok(!remainingIds.includes(blogToDelete.id))
+})
+
+test('HTTP DELETE request returns 404 when the resource with provided ID does not exist', async () => {
+  const nonexistentId = '000000000000000000000000'
+  await api.delete(`/api/blogs/${nonexistentId}`)
+    .expect(404)
+})
+
+test('HTTP DELETE request returns 400 when the provided ID is malformatted', async () => {
+  const malformattedId = 'ThisIdIsMalformatted'
+  await api.delete(`/api/blogs/${malformattedId}`)
+    .expect(400)
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
