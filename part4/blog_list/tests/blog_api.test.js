@@ -44,6 +44,16 @@ test('HTTP POST request successfully creates a new blog post', async () => {
   assert.strictEqual(blogsBeforeAdd.body.length + 1, blogsAfterAdd.body.length)
 })
 
+test('when likes is missing from POST request, it will default to 0', async () => {
+  const { ...newBlogWithoutLikes } = helper.testBlogList[0]
+  delete newBlogWithoutLikes.likes
+
+  const response = await api.post('/api/blogs')
+    .send(newBlogWithoutLikes)
+
+  assert.strictEqual(response.body.likes, 0)
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
