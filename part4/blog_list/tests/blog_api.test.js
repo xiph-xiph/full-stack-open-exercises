@@ -54,6 +54,21 @@ test('when likes is missing from POST request, it will default to 0', async () =
   assert.strictEqual(response.body.likes, 0)
 })
 
+test('when title or url properties are missing from the request data, the response code should be 400', async () => {
+  const { ...newBlogMissingTitle } = helper.testBlogList[0]
+  delete newBlogMissingTitle.title
+  const { ...newBlogMissingUrl } = helper.testBlogList[0]
+  delete newBlogMissingUrl.url
+
+  await api.post('/api/blogs')
+    .send(newBlogMissingTitle)
+    .expect(400)
+
+  await api.post('/api/blogs')
+    .send(newBlogMissingUrl)
+    .expect(400)
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
