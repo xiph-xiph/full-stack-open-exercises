@@ -20,8 +20,13 @@ test('blogs are returned as json', async () => {
 })
 
 test('correct amount of blog posts are returned', async () => {
-  const blogs = await api.get('/api/blogs')
-  assert.strictEqual(blogs.body.length, 6)
+  const response = await api.get('/api/blogs')
+  assert.strictEqual(response.body.length, 6)
+})
+
+test('identifier of the blog posts is named \'id\'', async () => {
+  const response = await api.get('/api/blogs')
+  assert.notStrictEqual(response.body[0]?.id, undefined)
 })
 
 after(async () => {
