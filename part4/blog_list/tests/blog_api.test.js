@@ -29,6 +29,21 @@ test('identifier of the blog posts is named \'id\'', async () => {
   assert.notStrictEqual(response.body[0]?.id, undefined)
 })
 
+test('HTTP POST request successfully creates a new blog post', async () => {
+  const newBlog = helper.testBlogList[0]
+
+  const blogsBeforeAdd = await api.get('/api/blogs')
+
+  await api.post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const blogsAfterAdd = await api.get('/api/blogs')
+
+  assert.strictEqual(blogsBeforeAdd.body.length + 1, blogsAfterAdd.body.length)
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
