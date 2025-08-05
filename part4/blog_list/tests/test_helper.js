@@ -37,4 +37,11 @@ const testBlogList = [
   }
 ]
 
-export default { testBlogList }
+const blogToBeEdited = {
+  title: 'Please edit me',
+  author: 'Please edit me',
+  url: 'Please edit me',
+  likes: 0
+}
+
+export default { testBlogList, blogToBeEdited }

@@ -35,4 +35,25 @@ blogsRouter.delete('/:id', async (request, response) => {
   }
 })
 
+blogsRouter.put('/:id', async (request, response) => {
+  const blogToUpdate = await Blog.findById(request.params.id)
+  if (blogToUpdate) {
+    const updatedBlog = await Blog.findOneAndReplace({ _id: request.params.id }, request.body, { returnDocument: 'after', runValidators: true })
+    response.status(200).json(updatedBlog)
+    return
+  }
+  const newBlog = new Blog({ ...request.body, _id: request.params.id })
+  const createdBlog = await newBlog.save()
+  response.status(201).json(createdBlog)
+})
+
+blogsRouter.patch('/:id', async (request, response) => {
+  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, request.body, { returnDocument: 'after' })
+  if (!updatedBlog) {
+    response.status(404).end()
+    return
+  }
+  response.json(updatedBlog)
+})
+
 export default blogsRouter
