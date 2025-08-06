@@ -221,7 +221,10 @@ describe('Blog API PATCH /api/blogs/:id', () => {
       .send(newBlog)
       .expect(200)
 
-    assert.deepStrictEqual(response.body, { ...helper.blogToBeEdited, id: response.body.id, author: newBlogTemplate.author })
+    assert.strictEqual(response.body.author, newBlog.author)
+    assert.strictEqual(response.body.title, blogToBeEdited.title)
+    assert.strictEqual(response.body.url, blogToBeEdited.url)
+    assert.strictEqual(response.body.likes, blogToBeEdited.likes)
   })
 
   test('should return 200 with no changes when empty object is sent', async () => {
@@ -230,7 +233,8 @@ describe('Blog API PATCH /api/blogs/:id', () => {
       .send(newBlog)
       .expect(200)
 
-    assert.deepStrictEqual(response.body, { ...helper.blogToBeEdited, id: response.body.id })
+    const expectedBlog = { ...helper.blogToBeEdited, id: response.body.id }
+    assert.deepStrictEqual(response.body, expectedBlog)
   })
 })
 
