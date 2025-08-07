@@ -44,4 +44,43 @@ const blogToBeEdited = {
   likes: 0
 }
 
-export default { testBlogList, blogToBeEdited }
+const testUsers = [
+  {
+    username: 'johndoe',
+    name: 'John Doe',
+    passwordHash: '$2b$10$abcdefghijklmno1234567890fakeHash1'
+  },
+  {
+    username: 'janesmithx',
+    name: 'Jane Smith',
+    passwordHash: '$2b$10$abcdefghijklmno1234567890fakeHash2'
+  },
+  {
+    username: 'mikejohnson',
+    name: 'Mike Johnson',
+    passwordHash: '$2b$10$abcdefghijklmno1234567890fakeHash3'
+  },
+  {
+    username: 'sarahwilson',
+    name: 'Sarah Wilson',
+    passwordHash: '$2b$10$abcdefghijklmno1234567890fakeHash4'
+  },
+  {
+    username: 'alexbrown',
+    name: 'Alex Brown',
+    passwordHash: '$2b$10$abcdefghijklmno1234567890fakeHash5'
+  },
+  {
+    username: 'emilydavis',
+    name: 'Emily Davis',
+    passwordHash: '$2b$10$abcdefghijklmno1234567890fakeHash6'
+  }
+]
+
+const newTestUser = {
+  username: 'gavinhankers1',
+  name: 'Gavin Hankers',
+  password: 'S3cureP@ssw0rd6!'
+}
+
+export default { testBlogList, blogToBeEdited, testUsers, newTestUser }

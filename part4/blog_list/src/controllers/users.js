@@ -13,10 +13,15 @@ usersRouter.get('/', async (request, response) => {
 usersRouter.post('/', async (request, response) => {
   logger.info('Received a POST request on the Users API')
   const { password, ...userData } = request.body
+  if (!password || password.length < 3) {
+    const error = new Error('Request must include a valid password with 3 or more characters.')
+    error.name = 'ValidationError'
+    throw error
+  }
   const passwordHash = await bcrypt.hash(password, 10)
   const newUser = new User({ ...userData, passwordHash: passwordHash })
   const result = await newUser.save()
-  response.json(result)
+  response.status(201).json(result)
 })
 
 
