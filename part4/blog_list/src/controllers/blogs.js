@@ -5,22 +5,22 @@ import logger from '../utils/logger.js'
 const blogsRouter = Router()
 
 blogsRouter.get('/', async (request, response) => {
-  const blogs = await Blog.find({})
-  response.json(blogs)
+  const allBlogs = await Blog.find({})
+  response.json(allBlogs)
   logger.info('Returned all blogs')
 })
 
 blogsRouter.post('/', async (request, response) => {
-  const blog = new Blog(request.body)
-  const result = await blog.save()
-  response.status(201).json(result)
-  logger.info(`Added ${result.title} to the database.`)
+  const newBlog = new Blog(request.body)
+  const savedBlog = await newBlog.save()
+  response.status(201).json(savedBlog)
+  logger.info(`Added ${savedBlog.title} to the database.`)
 })
 
 blogsRouter.get('/:id', async (request, response) => {
-  const blogFound = await Blog.findById(request.params.id)
-  if (blogFound) {
-    response.json(blogFound)
+  const foundBlog = await Blog.findById(request.params.id)
+  if (foundBlog) {
+    response.json(foundBlog)
   } else {
     response.status(404).end()
   }
