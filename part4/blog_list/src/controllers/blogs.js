@@ -1,17 +1,19 @@
 import { Router } from 'express'
 import Blog from '../models/blog.js'
+import User from '../models/user.js'
 import logger from '../utils/logger.js'
 
 const blogsRouter = Router()
 
 blogsRouter.get('/', async (request, response) => {
-  const allBlogs = await Blog.find({})
+  const allBlogs = await Blog.find({}).populate('user', { username: 1, name: 1, id: 1 })
   response.json(allBlogs)
   logger.info('Returned all blogs')
 })
 
 blogsRouter.post('/', async (request, response) => {
-  const newBlog = new Blog(request.body)
+  const user = await User.findOne({})
+  const newBlog = new Blog({ ...request.body, user: user._id })
   const savedBlog = await newBlog.save()
   response.status(201).json(savedBlog)
   logger.info(`Added ${savedBlog.title} to the database.`)

@@ -6,7 +6,7 @@ import User from '../models/user.js'
 const usersRouter = Router()
 
 usersRouter.get('/', async (request, response) => {
-  const allUsers = await User.find({})
+  const allUsers = await User.find({}).populate('blogs', { title: 1, url: 1, author: 1, id: 1 })
   response.json(allUsers)
 })
 
@@ -19,7 +19,7 @@ usersRouter.post('/', async (request, response) => {
     throw error
   }
   const passwordHash = await bcrypt.hash(password, 10)
-  const newUser = new User({ ...userData, passwordHash: passwordHash })
+  const newUser = new User({ ...userData, passwordHash: passwordHash, blogs: [] })
   const result = await newUser.save()
   response.status(201).json(result)
 })
