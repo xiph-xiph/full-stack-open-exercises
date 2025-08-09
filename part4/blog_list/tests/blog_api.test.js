@@ -198,7 +198,7 @@ describe('Blog API PUT /api/blogs/:id', () => {
   let blogToBeEdited
   let newBlogTemplate
   beforeEach(async () => {
-    blogToBeEdited = await Blog.create(helper.blogToBeEdited)
+    blogToBeEdited = await Blog.create({ ...helper.blogToBeEdited, user: userId })
     newBlogTemplate = {
       title: 'Epic Blog Title',
       author: 'Joe Stone',
@@ -211,6 +211,7 @@ describe('Blog API PUT /api/blogs/:id', () => {
     const newBlog = { ...newBlogTemplate }
     const invalidId = 'ThisIdIsMalformatted'
     await api.put(`/api/blogs/${invalidId}`)
+      .auth(token, { type: 'bearer' })
       .send(newBlog)
       .expect(400)
   })
@@ -219,6 +220,7 @@ describe('Blog API PUT /api/blogs/:id', () => {
     const newBlog = { ...newBlogTemplate }
     delete newBlog.title
     await api.put(`/api/blogs/${blogToBeEdited.id}`)
+      .auth(token, { type: 'bearer' })
       .send(newBlog)
       .expect(400)
   })
@@ -227,6 +229,7 @@ describe('Blog API PUT /api/blogs/:id', () => {
     const newBlog = { ...newBlogTemplate }
     delete newBlog.url
     await api.put(`/api/blogs/${blogToBeEdited.id}`)
+      .auth(token, { type: 'bearer' })
       .send(newBlog)
       .expect(400)
   })
@@ -234,25 +237,35 @@ describe('Blog API PUT /api/blogs/:id', () => {
   test('should update blog post and return updated blog with status 200 when valid data is provided', async () => {
     const newBlog = { ...newBlogTemplate }
     const response = await api.put(`/api/blogs/${blogToBeEdited.id}`)
+      .auth(token, { type: 'bearer' })
       .send(newBlog)
       .expect(200)
-    assert.deepStrictEqual(response.body, { ...newBlog, id: response.body.id })
+    assert.deepStrictEqual(response.body, { ...newBlog, id: response.body.id, user: userId })
   })
 
-  test('should create a new entry at specified resource id and return updated blog with status 201 when it is valid but doesn\'t exist yet', async () => {
+  test('should return 403 and not update the blog when the blog does not belong to the user'), async () => {
+    const wrongUser = await api.post('/api/users').send(helper.newTestUser2)
+    const wrongToken = jwt.sign({ username: wrongUser.body.username, id: wrongUser.body.id }, process.env.SECRET)
+    const blogBeforeUpdate = await api.get(`/api/blogs/${blogToUpdate.id}`)
+
     const newBlog = { ...newBlogTemplate }
-    const response = await api.put('/api/blogs/0123456789abcdef01234567')
+    const blogToUpdate = blogBeforeUpdate.body[0]
+    await api.put(`/api/blogs/${blogToUpdate.id}`)
+      .auth(wrongToken, { type: 'bearer' })
       .send(newBlog)
-      .expect(201)
-    assert.deepStrictEqual(response.body, { ...newBlog, id: '0123456789abcdef01234567' })
-  })
+      .expect(403)
+
+    const blogAfterUpdate = await api.get(`/api/blogs/${blogToUpdate.id}`)
+
+    assert.deepStrictEqual(blogBeforeUpdate, blogAfterUpdate)
+  }
 })
 
 describe('Blog API PATCH /api/blogs/:id', () => {
   let blogToBeEdited
   let newBlogTemplate
   beforeEach(async () => {
-    blogToBeEdited = await Blog.create(helper.blogToBeEdited)
+    blogToBeEdited = await Blog.create({ ...helper.blogToBeEdited, user: userId })
     newBlogTemplate = {
       title: 'Epic Blog Title',
       author: 'Joe Stone',
@@ -265,6 +278,7 @@ describe('Blog API PATCH /api/blogs/:id', () => {
     const newBlog = { author: newBlogTemplate.author }
     const invalidId = 'ThisIdIsMalformatted'
     await api.patch(`/api/blogs/${invalidId}`)
+      .auth(token, { type: 'bearer' })
       .send(newBlog)
       .expect(400)
   })
@@ -273,6 +287,7 @@ describe('Blog API PATCH /api/blogs/:id', () => {
     const newBlog = { author: newBlogTemplate.author }
     const nonexistentId = '000000000000000000000000'
     await api.patch(`/api/blogs/${nonexistentId}`)
+      .auth(token, { type: 'bearer' })
       .send(newBlog)
       .expect(404)
   })
@@ -280,6 +295,7 @@ describe('Blog API PATCH /api/blogs/:id', () => {
   test('should leave other properties unchanged when updating only specific fields', async () => {
     const newBlog = { author: newBlogTemplate.author }
     const response = await api.patch(`/api/blogs/${blogToBeEdited.id}`)
+      .auth(token, { type: 'bearer' })
       .send(newBlog)
       .expect(200)
 
@@ -292,12 +308,30 @@ describe('Blog API PATCH /api/blogs/:id', () => {
   test('should return 200 with no changes when empty object is sent', async () => {
     const newBlog = {}
     const response = await api.patch(`/api/blogs/${blogToBeEdited.id}`)
+      .auth(token, { type: 'bearer' })
       .send(newBlog)
       .expect(200)
 
     const expectedBlog = { ...helper.blogToBeEdited, id: response.body.id }
-    assert.deepStrictEqual(response.body, expectedBlog)
+    assert.deepStrictEqual(response.body, { ...expectedBlog, user: userId })
   })
+
+  test('should return 403 and not update the blog when the blog does not belong to the user'), async () => {
+    const wrongUser = await api.post('/api/users').send(helper.newTestUser2)
+    const wrongToken = jwt.sign({ username: wrongUser.body.username, id: wrongUser.body.id }, process.env.SECRET)
+    const blogBeforeUpdate = await api.get(`/api/blogs/${blogToUpdate.id}`)
+
+    const newBlog = { author: newBlogTemplate.author }
+    const blogToUpdate = blogBeforeUpdate.body[0]
+    await api.patch(`/api/blogs/${blogToUpdate.id}`)
+      .auth(wrongToken, { type: 'bearer' })
+      .send(newBlog)
+      .expect(403)
+
+    const blogAfterUpdate = await api.get(`/api/blogs/${blogToUpdate.id}`)
+
+    assert.deepStrictEqual(blogBeforeUpdate, blogAfterUpdate)
+  }
 })
 
 after(async () => {

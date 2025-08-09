@@ -29,40 +29,41 @@ blogsRouter.get('/:id', async (request, response) => {
 
 blogsRouter.delete('/:id', userExtractor, async (request, response) => {
   const blogToDelete = await Blog.findById(request.params.id)
-  if (!blogToDelete) {
-    response.status(404).end()
-    return
-  }
-  console.log(typeof request.user.id)
-  console.log(typeof blogToDelete.user)
-  if (request.user.id !== String(blogToDelete.user)) {
-    response.status(403).end()
-    return
-  }
+  if (!blogToDelete) return response.status(404).end()
+
+  if (request.user.id !== String(blogToDelete.user)) return response.status(403).end()
+
   const deletedBlog = await Blog.findByIdAndDelete(request.params.id)
   if (deletedBlog) {
     response.status(204).end()
   }
 })
 
-blogsRouter.put('/:id', async (request, response) => {
+blogsRouter.put('/:id', userExtractor, async (request, response) => {
   const blogToUpdate = await Blog.findById(request.params.id)
-  if (blogToUpdate) {
-    const updatedBlog = await Blog.findOneAndReplace({ _id: request.params.id }, request.body, { returnDocument: 'after', runValidators: true })
-    response.status(200).json(updatedBlog)
-    return
-  }
-  const newBlog = new Blog({ ...request.body, _id: request.params.id })
-  const createdBlog = await newBlog.save()
-  response.status(201).json(createdBlog)
+
+  if (!blogToUpdate) return response.status(404).end()
+  if (request.user.id !== String(blogToUpdate.user)) return response.status(403).end()
+
+  const updatedBlog = await Blog.findOneAndReplace({ _id: request.params.id },
+    {
+      title: request.body.title,
+      author: request.body.author,
+      url: request.body.url,
+      likes: request.body.likes ?? 0,
+      user: blogToUpdate.user
+    },
+    { returnDocument: 'after', runValidators: true })
+  response.status(200).json(updatedBlog)
 })
 
-blogsRouter.patch('/:id', async (request, response) => {
+blogsRouter.patch('/:id', userExtractor, async (request, response) => {
+  const blogToUpdate = await Blog.findById(request.params.id)
+  if (!blogToUpdate) return response.status(404).end()
+  if (request.user.id !== String(blogToUpdate.user)) return response.status(403).end()
+
   const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, request.body, { returnDocument: 'after' })
-  if (!updatedBlog) {
-    response.status(404).end()
-    return
-  }
+
   response.json(updatedBlog)
 })
 
