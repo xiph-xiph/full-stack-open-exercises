@@ -10,9 +10,21 @@ import jwt from 'jsonwebtoken'
 
 const api = supertest(app)
 
+let token
+let userId
+before(async () => {
+  await User.deleteMany({})
+  const response = await api.post('/api/users').send(helper.newTestUser)
+  token = jwt.sign({ username: response.body.username, id: response.body.id }, process.env.SECRET)
+  userId = response.body.id
+})
+
 beforeEach(async () => {
   await Blog.deleteMany({})
-  await Blog.insertMany(helper.testBlogList)
+  const newBlogList = helper.testBlogList.map((blog) => (
+    { ...blog, user: userId }
+  ))
+  await Blog.insertMany(newBlogList)
 })
 
 describe('Blog API GET /api/blogs', () => {
@@ -35,13 +47,6 @@ describe('Blog API GET /api/blogs', () => {
 })
 
 describe('Blog API POST /api/blogs', () => {
-  let token
-  before(async () => {
-    await User.deleteMany({})
-    const response = await api.post('/api/users').send(helper.newTestUser)
-    token = jwt.sign({ username: response.body.username, id: response.body.id }, process.env.SECRET)
-  })
-
   test('should create new blog post with status 201', async () => {
     const newBlog = helper.testBlogList[0]
 
@@ -129,13 +134,13 @@ describe('Blog API GET /api/blogs/:id', () => {
 })
 
 describe('Blog API DELETE /api/blogs/:id', () => {
-  test('should delete blog post and return 204 when valid id is provided', async () => {
-
+  test('should delete blog post and return 204 when valid id with valid token is provided', async () => {
     const blogsBeforeDelete = await api.get('/api/blogs')
 
     const blogToDelete = blogsBeforeDelete.body[0]
 
     await api.delete(`/api/blogs/${blogToDelete.id}`)
+      .auth(token, { type: 'bearer' })
       .expect(204)
 
     const blogsAfterDelete = await api.get('/api/blogs')
@@ -149,13 +154,43 @@ describe('Blog API DELETE /api/blogs/:id', () => {
   test('should return 404 when trying to delete nonexistent blog post', async () => {
     const nonexistentId = '000000000000000000000000'
     await api.delete(`/api/blogs/${nonexistentId}`)
+      .auth(token, { type: 'bearer' })
       .expect(404)
   })
 
   test('should return 400 when id format is invalid', async () => {
     const malformattedId = 'ThisIdIsMalformatted'
     await api.delete(`/api/blogs/${malformattedId}`)
+      .auth(token, { type: 'bearer' })
       .expect(400)
+  })
+
+  test('should return 401 and not delete the blog when valid token is not supplied', async () => {
+    const blogsBeforeDelete = await api.get('/api/blogs')
+
+    const blogToDelete = blogsBeforeDelete.body[0]
+    await api.delete(`/api/blogs/${blogToDelete.id}`)
+      .expect(401)
+
+    const blogsAfterDelete = await api.get('/api/blogs')
+
+    assert.strictEqual(blogsBeforeDelete.body.length, blogsAfterDelete.body.length)
+  })
+
+  test('should return 403 and not delete the blog when the blog does not belong to the user', async () => {
+    const wrongUser = await api.post('/api/users').send(helper.newTestUser2)
+    const wrongToken = jwt.sign({ username: wrongUser.body.username, id: wrongUser.body.id }, process.env.SECRET)
+
+    const blogsBeforeDelete = await api.get('/api/blogs')
+
+    const blogToDelete = blogsBeforeDelete.body[0]
+    await api.delete(`/api/blogs/${blogToDelete.id}`)
+      .auth(wrongToken, { type: 'bearer' })
+      .expect(403)
+
+    const blogsAfterDelete = await api.get('/api/blogs')
+
+    assert.strictEqual(blogsBeforeDelete.body.length, blogsAfterDelete.body.length)
   })
 })
 

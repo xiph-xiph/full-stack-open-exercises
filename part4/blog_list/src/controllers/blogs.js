@@ -15,6 +15,9 @@ blogsRouter.get('/', async (request, response) => {
 blogsRouter.post('/', async (request, response) => {
   const decodedToken = jwt.verify(request.token, process.env.SECRET)
   const user = await User.findById(decodedToken.id)
+  if (!user) {
+    // error: user does not exist
+  }
   const newBlog = new Blog({ ...request.body, user: user._id })
   const savedBlog = await newBlog.save()
   response.status(201).json(savedBlog)
@@ -22,7 +25,7 @@ blogsRouter.post('/', async (request, response) => {
 })
 
 blogsRouter.get('/:id', async (request, response) => {
-  const foundBlog = await Blog.findById(request.params.id)
+  const foundBlog = await Blog.findById(request.params.id).populate('user', { username: 1, name: 1, id: 1 })
   if (foundBlog) {
     response.json(foundBlog)
   } else {
@@ -31,11 +34,26 @@ blogsRouter.get('/:id', async (request, response) => {
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
+
+  const blogToDelete = await Blog.findById(request.params.id)
+  if (!blogToDelete) {
+    response.status(404).end()
+    return
+  }
+  const decodedToken = jwt.verify(request.token, process.env.SECRET)
+  const user = await User.findById(decodedToken.id)
+  if (!user) {
+    // error: user does not exist
+  }
+  console.log(typeof user.id)
+  console.log(typeof blogToDelete.user)
+  if (user.id !== String(blogToDelete.user)) {
+    response.status(403).end()
+    return
+  }
   const deletedBlog = await Blog.findByIdAndDelete(request.params.id)
   if (deletedBlog) {
     response.status(204).end()
-  } else {
-    response.status(404).end()
   }
 })
 

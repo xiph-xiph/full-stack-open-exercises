@@ -83,4 +83,10 @@ const newTestUser = {
   password: 'S3cureP@ssw0rd6!'
 }
 
-export default { testBlogList, blogToBeEdited, testUsers, newTestUser }
+const newTestUser2 = {
+  username: 'janedoe99',
+  name: 'Jane Doe',
+  password: 'An0ther$ecureP@ss'
+}
+
+export default { testBlogList, blogToBeEdited, testUsers, newTestUser, newTestUser2 }
