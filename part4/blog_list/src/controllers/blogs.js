@@ -2,6 +2,7 @@ import { Router } from 'express'
 import Blog from '../models/blog.js'
 import User from '../models/user.js'
 import logger from '../utils/logger.js'
+import jwt from 'jsonwebtoken'
 
 const blogsRouter = Router()
 
@@ -12,7 +13,8 @@ blogsRouter.get('/', async (request, response) => {
 })
 
 blogsRouter.post('/', async (request, response) => {
-  const user = await User.findOne({})
+  const decodedToken = jwt.verify(request.body.token, process.env.SECRET)
+  const user = await User.findById(decodedToken.id)
   const newBlog = new Blog({ ...request.body, user: user._id })
   const savedBlog = await newBlog.save()
   response.status(201).json(savedBlog)
