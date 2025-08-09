@@ -1,8 +1,7 @@
 import { Router } from 'express'
 import Blog from '../models/blog.js'
-import User from '../models/user.js'
+import { userExtractor } from '../utils/middleware.js'
 import logger from '../utils/logger.js'
-import jwt from 'jsonwebtoken'
 
 const blogsRouter = Router()
 
@@ -12,13 +11,8 @@ blogsRouter.get('/', async (request, response) => {
   logger.info('Returned all blogs')
 })
 
-blogsRouter.post('/', async (request, response) => {
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  const user = await User.findById(decodedToken.id)
-  if (!user) {
-    // error: user does not exist
-  }
-  const newBlog = new Blog({ ...request.body, user: user._id })
+blogsRouter.post('/', userExtractor, async (request, response) => {
+  const newBlog = new Blog({ ...request.body, user: request.user.id })
   const savedBlog = await newBlog.save()
   response.status(201).json(savedBlog)
   logger.info(`Added ${savedBlog.title} to the database.`)
@@ -33,21 +27,15 @@ blogsRouter.get('/:id', async (request, response) => {
   }
 })
 
-blogsRouter.delete('/:id', async (request, response) => {
-
+blogsRouter.delete('/:id', userExtractor, async (request, response) => {
   const blogToDelete = await Blog.findById(request.params.id)
   if (!blogToDelete) {
     response.status(404).end()
     return
   }
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  const user = await User.findById(decodedToken.id)
-  if (!user) {
-    // error: user does not exist
-  }
-  console.log(typeof user.id)
+  console.log(typeof request.user.id)
   console.log(typeof blogToDelete.user)
-  if (user.id !== String(blogToDelete.user)) {
+  if (request.user.id !== String(blogToDelete.user)) {
     response.status(403).end()
     return
   }
