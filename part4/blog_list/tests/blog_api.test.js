@@ -39,7 +39,7 @@ describe('Blog API POST /api/blogs', () => {
   before(async () => {
     await User.deleteMany({})
     const response = await api.post('/api/users').send(helper.newTestUser)
-    token = jwt.sign({ username: response.body.username, id: response.body.id })
+    token = jwt.sign({ username: response.body.username, id: response.body.id }, process.env.SECRET)
   })
 
   test('should create new blog post with status 201', async () => {
@@ -96,12 +96,11 @@ describe('Blog API POST /api/blogs', () => {
 
     await api.post('/api/blogs')
       .send(newBlog)
-      .expect(201)
-      .expect('Content-Type', /application\/json/)
+      .expect(401)
 
     const blogsAfterAdd = await api.get('/api/blogs')
 
-    assert.strictEqual(blogsBeforeAdd.body.length + 1, blogsAfterAdd.body.length)
+    assert.strictEqual(blogsBeforeAdd.body.length, blogsAfterAdd.body.length)
   })
 })
 
