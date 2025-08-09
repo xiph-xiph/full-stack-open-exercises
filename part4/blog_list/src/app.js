@@ -5,7 +5,7 @@ import blogsRouter from './controllers/blogs.js'
 import usersRouter from './controllers/users.js'
 import loginRouter from './controllers/login.js'
 import logger from './utils/logger.js'
-import { errorHandler } from './utils/middleware.js'
+import { tokenExtractor, errorHandler } from './utils/middleware.js'
 const app = express()
 
 logger.info('Connecting to MongoDB...')
@@ -20,6 +20,7 @@ mongoose
   })
 
 app.use(express.json())
+app.use(tokenExtractor)
 app.use('/api/blogs', blogsRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)

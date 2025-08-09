@@ -1,10 +1,12 @@
-import { test, after, beforeEach, describe } from 'node:test'
+import { test, after, before, beforeEach, describe } from 'node:test'
 import assert from 'node:assert'
 import supertest from 'supertest'
 import mongoose from 'mongoose'
 import app from '../src/app.js'
 import Blog from '../src/models/blog.js'
+import User from '../src/models/user.js'
 import helper from './test_helper.js'
+import jwt from 'jsonwebtoken'
 
 const api = supertest(app)
 
@@ -33,12 +35,20 @@ describe('Blog API GET /api/blogs', () => {
 })
 
 describe('Blog API POST /api/blogs', () => {
+  let token
+  before(async () => {
+    await User.deleteMany({})
+    const response = await api.post('/api/users').send(helper.newTestUser)
+    token = jwt.sign({ username: response.body.username, id: response.body.id })
+  })
+
   test('should create new blog post with status 201', async () => {
     const newBlog = helper.testBlogList[0]
 
     const blogsBeforeAdd = await api.get('/api/blogs')
 
     await api.post('/api/blogs')
+      .auth(token, { type: 'bearer' })
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -53,6 +63,7 @@ describe('Blog API POST /api/blogs', () => {
     delete newBlogWithoutLikes.likes
 
     const response = await api.post('/api/blogs')
+      .auth(token, { type: 'bearer' })
       .send(newBlogWithoutLikes)
 
     assert.strictEqual(response.body.likes, 0)
@@ -63,6 +74,7 @@ describe('Blog API POST /api/blogs', () => {
     delete newBlog.title
 
     await api.post('/api/blogs')
+      .auth(token, { type: 'bearer' })
       .send(newBlog)
       .expect(400)
   })
@@ -72,8 +84,24 @@ describe('Blog API POST /api/blogs', () => {
     delete newBlog.url
 
     await api.post('/api/blogs')
+      .auth(token, { type: 'bearer' })
       .send(newBlog)
       .expect(400)
+  })
+
+  test('should return 401 and not create a new blog when valid token is not supplied', async () => {
+    const { ...newBlog } = helper.testBlogList[0]
+
+    const blogsBeforeAdd = await api.get('/api/blogs')
+
+    await api.post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsAfterAdd = await api.get('/api/blogs')
+
+    assert.strictEqual(blogsBeforeAdd.body.length + 1, blogsAfterAdd.body.length)
   })
 })
 

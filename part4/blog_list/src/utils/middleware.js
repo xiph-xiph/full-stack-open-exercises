@@ -1,6 +1,13 @@
+/* eslint-disable no-unused-vars */
 import logger from './logger.js'
 
-// eslint-disable-next-line no-unused-vars
+const tokenExtractor = (request, response) => {
+  const authorization = request.get('authorization')
+  if (authorization && authorization.startsWith('Bearer ')) {
+    request.token = authorization.replace('Bearer ', '')
+  }
+}
+
 const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'ValidationError') {
@@ -16,4 +23,4 @@ const errorHandler = (error, request, response, next) => {
   return response.status(500).json({ error: 'Internal server error' })
 }
 
-export { errorHandler }
+export { tokenExtractor, errorHandler }
