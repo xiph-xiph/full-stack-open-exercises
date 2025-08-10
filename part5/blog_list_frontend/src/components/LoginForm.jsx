@@ -1,7 +1,20 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import Notification from './Notification'
 import loginService from '../services/login'
 
 const LoginForm = ({ setUser }) => {
+  const [notifMessage, setNotifMessage] = useState('')
+  const [notifIsError, setNotifIsError] = useState(false)
+  useEffect(() => {
+    if (notifMessage) {
+      const timer = setTimeout(() => {
+        setNotifMessage('')
+        setNotifIsError(false)
+      }, 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [notifMessage])
+
   const [username, setUsername] = useState('')
   const handleUsernameChange = (event) => {
     setUsername(event.target.value)
@@ -15,16 +28,23 @@ const LoginForm = ({ setUser }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault()
-    const user = await loginService.login(username, password)
-    setUser(user)
-    setUsername('')
-    setPassword('')
+    try {
+      const user = await loginService.login(username, password)
+      setUser(user)
+      setUsername('')
+      setPassword('')
+    } catch (error) {
+      setNotifMessage(error.response?.data?.error)
+      setNotifIsError(true)
+    }
+
   }
 
 
 
   return (
     <>
+      <Notification message={ notifMessage } isError={ notifIsError } />
       <form onSubmit={handleSubmit}>
 
         <div>

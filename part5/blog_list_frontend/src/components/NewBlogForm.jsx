@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import blogService from '../services/blogs'
 
-const NewBlogForm = ({ addBlogToList }) => {
+const NewBlogForm = ({ addBlogToList, setNotification }) => {
   const [title, setTitle] = useState('')
   const handleTitleChange = (event) => {
     setTitle(event.target.value)
@@ -19,13 +19,17 @@ const NewBlogForm = ({ addBlogToList }) => {
 
   const handleSubmit = async event => {
     event.preventDefault()
-    const createdBlog = await blogService.addNew({ title, author, url })
-    if (createdBlog) {
+    try {
+      const createdBlog = await blogService.addNew({ title, author, url })
       addBlogToList(createdBlog)
+      setNotification(`New blog "${ title }" by ${ author } added.`)
       setTitle('')
       setAuthor('')
       setUrl('')
+    } catch (error) {
+      setNotification(error.response?.data?.error, true)
     }
+    
     
   }
   return (
