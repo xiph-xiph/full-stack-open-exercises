@@ -29,6 +29,15 @@ describe('Login API POST /api/login', () => {
     const decodedToken = jwt.verify(response.body.token, process.env.SECRET)
     assert.strictEqual(decodedToken.username, helper.newTestUser.username)
   })
+
+  test('should return 401 when provided username does not exist', async () => {
+    await api.post('/api/login')
+      .send({
+        username: 'IDoNotExist',
+        password: 'ShouldntEvenMatter'
+      })
+      .expect(401)
+  })
 })
 
 after(async () => {
