@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import BlogList from './components/BlogList'
 import LoginForm from './components/LoginForm'
+import blogService from './services/blogs'
 
 const App = () => {
   const [user, setUser] = useState(null)
@@ -14,6 +15,7 @@ const App = () => {
 
   useEffect(() => {
     window.localStorage.setItem('user', JSON.stringify(user))
+    blogService.setToken(user?.token)
   }, [user])
 
   const handleLogout = () => {
