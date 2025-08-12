@@ -1,7 +1,6 @@
 import { useState } from 'react'
-import Toggleable from "./Toggleable"
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, likeBlog }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -9,6 +8,8 @@ const Blog = ({ blog }) => {
     borderWidth: 1,
     marginBottom: 5
   }
+  
+  const handleLike = () => likeBlog(blog)
 
   const [isVisible, setIsVisible] = useState(false)
 
@@ -21,7 +22,7 @@ const Blog = ({ blog }) => {
       { isVisible && (
         <>
           <div>{ blog.url }</div>
-          <div>{ 'likes: ' + blog.likes }</div>
+          <div>{ 'likes: ' + blog.likes } <button onClick={ handleLike }>like</button></div>
           <div>{ blog.user.name }</div>
         </>
       )}

@@ -40,6 +40,13 @@ const BlogList = ({ user, handleLogout }) => {
   const addBlogToList = newBlog => {
     setBlogs([...blogs, newBlog])
   }
+  
+  const likeBlog = async blogToLike => {
+    const updatedBlog = await blogService.update({ ...blogToLike, likes: blogToLike.likes + 1 })
+    setBlogs(blogs.map(blog => (
+      blog.id === updatedBlog.id ? updatedBlog : blog
+    )))
+  }
 
   return (
     <>
@@ -53,7 +60,7 @@ const BlogList = ({ user, handleLogout }) => {
       <Toggleable buttonLabel='Add new blog' ref={ blogFormRef }>
         <NewBlogForm addBlogToList={ addBlogToList } setNotification={ setNotification } closeForm={ closeForm }/>
       </Toggleable>
-      { blogs.map(blog => <Blog key={ blog.id } blog={ blog } /> ) }
+      { blogs.map(blog => <Blog key={ blog.id } blog={ blog } likeBlog={ likeBlog } /> ) }
     </>
   )
 }
