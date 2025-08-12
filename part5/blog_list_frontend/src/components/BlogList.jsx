@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import Toggleable from './Toggleable'
 import Blog from './Blog'
 import NewBlogForm from './NewBlogForm'
 import Notification from './Notification'
@@ -32,6 +33,10 @@ const BlogList = ({ user, handleLogout }) => {
     fetchBlogs()
   }, [])
 
+  const blogFormRef = useRef()
+
+  const closeForm = () => blogFormRef.current.toggleVisibility()
+
   const addBlogToList = newBlog => {
     setBlogs([...blogs, newBlog])
   }
@@ -45,7 +50,9 @@ const BlogList = ({ user, handleLogout }) => {
         <button onClick={ handleLogout }>Logout</button>
       </p>
       <h2>Create new blog</h2>
-      <NewBlogForm addBlogToList={ addBlogToList } setNotification={ setNotification }/>
+      <Toggleable buttonLabel='Add new blog' ref={ blogFormRef }>
+        <NewBlogForm addBlogToList={ addBlogToList } setNotification={ setNotification } closeForm={ closeForm }/>
+      </Toggleable>
       { blogs.map(blog => <Blog key={ blog.id } blog={ blog } /> ) }
     </>
   )
