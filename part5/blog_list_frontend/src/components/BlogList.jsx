@@ -33,6 +33,12 @@ const BlogList = ({ user, handleLogout }) => {
     fetchBlogs()
   }, [])
 
+  const [sortedBlogs, setSortedBlogs] = useState([])
+
+  useEffect(() => {
+    setSortedBlogs(blogs.sort((a, b) => b.likes - a.likes))
+  }, [blogs])
+
   const blogFormRef = useRef()
 
   const closeForm = () => blogFormRef.current.toggleVisibility()
@@ -61,7 +67,7 @@ const BlogList = ({ user, handleLogout }) => {
       <Toggleable buttonLabel='Add new blog' ref={ blogFormRef }>
         <NewBlogForm addBlogToList={ addBlogToList } setNotification={ setNotification } closeForm={ closeForm }/>
       </Toggleable>
-      { blogs.map(blog => <Blog key={ blog.id } blog={ blog } likeBlog={ likeBlog } /> ) }
+      { sortedBlogs.map(blog => <Blog key={ blog.id } blog={ blog } likeBlog={ likeBlog } /> ) }
     </>
   )
 }
