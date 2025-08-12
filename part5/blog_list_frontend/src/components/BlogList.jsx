@@ -4,6 +4,7 @@ import Blog from './Blog'
 import NewBlogForm from './NewBlogForm'
 import Notification from './Notification'
 import blogService from '../services/blogs'
+import PropTypes from 'prop-types'
 
 const BlogList = ({ user, handleLogout }) => {
   const [notifMessage, setNotifMessage] = useState('')
@@ -46,7 +47,7 @@ const BlogList = ({ user, handleLogout }) => {
   const addBlogToList = newBlog => {
     setBlogs([...blogs, newBlog])
   }
-  
+
   const likeBlog = async blogToLike => {
     const updatedBlog = await blogService.update({ ...blogToLike, likes: blogToLike.likes + 1, user: blogToLike.user.id })
     updatedBlog.user = blogToLike.user
@@ -77,6 +78,11 @@ const BlogList = ({ user, handleLogout }) => {
       { sortedBlogs.map(blog => <Blog key={ blog.id } blog={ blog } likeBlog={ likeBlog } removeBlog={ removeBlog } /> ) }
     </>
   )
+}
+
+BlogList.propTypes = {
+  user: PropTypes.object.isRequired,
+  handleLogout: PropTypes.func.isRequired
 }
 
 export default BlogList

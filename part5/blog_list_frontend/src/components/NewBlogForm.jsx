@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import blogService from '../services/blogs'
+import PropTypes from 'prop-types'
 
 const NewBlogForm = ({ addBlogToList, setNotification, closeForm }) => {
   const [title, setTitle] = useState('')
@@ -30,40 +31,46 @@ const NewBlogForm = ({ addBlogToList, setNotification, closeForm }) => {
   }
 
   return (
-  <>
-    <form onSubmit={ handleSubmit }>
+    <>
+      <form onSubmit={ handleSubmit }>
 
-      <div>
-        Title:
-        <input
-          value={ title }
-          onChange={ handleTitleChange }
-        />
-      </div>
+        <div>
+          Title:
+          <input
+            value={ title }
+            onChange={ handleTitleChange }
+          />
+        </div>
 
-      <div>
-        Author:
-        <input
-          value={ author }
-          onChange={ handleAuthorChange }
-        />
-      </div>
+        <div>
+          Author:
+          <input
+            value={ author }
+            onChange={ handleAuthorChange }
+          />
+        </div>
 
-      <div>
-        URL:
-        <input
-          value={ url }
-          onChange={ handleUrlChange }
-        />
-      </div>
+        <div>
+          URL:
+          <input
+            value={ url }
+            onChange={ handleUrlChange }
+          />
+        </div>
 
-      <button type="submit">Create</button>
+        <button type="submit">Create</button>
 
-    </form>
+      </form>
 
-    <button onClick={ closeForm }>Cancel</button>
-  </>
+      <button onClick={ closeForm }>Cancel</button>
+    </>
   )
+}
+
+NewBlogForm.propTypes = {
+  addBlogToList: PropTypes.func.isRequired,
+  setNotification: PropTypes.func.isRequired,
+  closeForm: PropTypes.func.isRequired
 }
 
 export default NewBlogForm

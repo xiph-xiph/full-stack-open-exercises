@@ -27,8 +27,8 @@ const App = () => {
     <div>
       {
         user ?
-        <BlogList user={ user } handleLogout={ handleLogout } /> :
-        <LoginForm setUser={ setUser } />
+          <BlogList user={ user } handleLogout={ handleLogout } /> :
+          <LoginForm setUser={ setUser } />
       }
     </div>
   )

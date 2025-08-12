@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types'
+
 const Notification = ({ message, isError=false }) => {
   const messageStyle = {
     color: isError ? 'red': 'green',
@@ -15,6 +17,11 @@ const Notification = ({ message, isError=false }) => {
   } else {
     return null
   }
+}
+
+Notification.propTypes = {
+  message: PropTypes.string.isRequired,
+  isError: PropTypes.bool
 }
 
 export default Notification

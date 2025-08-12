@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import Notification from './Notification'
 import loginService from '../services/login'
+import PropTypes from 'prop-types'
 
 const LoginForm = ({ setUser }) => {
   const [notifMessage, setNotifMessage] = useState('')
@@ -40,8 +41,6 @@ const LoginForm = ({ setUser }) => {
 
   }
 
-
-
   return (
     <>
       <Notification message={ notifMessage } isError={ notifIsError } />
@@ -69,6 +68,10 @@ const LoginForm = ({ setUser }) => {
       </form>
     </>
   )
+}
+
+LoginForm.propTypes = {
+  setUser: PropTypes.func.isRequired
 }
 
 export default LoginForm
