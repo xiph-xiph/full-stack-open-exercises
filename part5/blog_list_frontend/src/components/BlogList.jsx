@@ -55,6 +55,13 @@ const BlogList = ({ user, handleLogout }) => {
     )))
   }
 
+  const removeBlog = async blogToRemove => {
+    await blogService.remove(blogToRemove.id)
+    setBlogs(blogs.filter(blog => (
+      blog.id !== blogToRemove.id
+    )))
+  }
+
   return (
     <>
       <h2>Blogs</h2>
@@ -67,7 +74,7 @@ const BlogList = ({ user, handleLogout }) => {
       <Toggleable buttonLabel='Add new blog' ref={ blogFormRef }>
         <NewBlogForm addBlogToList={ addBlogToList } setNotification={ setNotification } closeForm={ closeForm }/>
       </Toggleable>
-      { sortedBlogs.map(blog => <Blog key={ blog.id } blog={ blog } likeBlog={ likeBlog } /> ) }
+      { sortedBlogs.map(blog => <Blog key={ blog.id } blog={ blog } likeBlog={ likeBlog } removeBlog={ removeBlog } /> ) }
     </>
   )
 }
