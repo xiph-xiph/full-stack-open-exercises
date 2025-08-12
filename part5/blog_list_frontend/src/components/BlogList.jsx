@@ -42,7 +42,8 @@ const BlogList = ({ user, handleLogout }) => {
   }
   
   const likeBlog = async blogToLike => {
-    const updatedBlog = await blogService.update({ ...blogToLike, likes: blogToLike.likes + 1 })
+    const updatedBlog = await blogService.update({ ...blogToLike, likes: blogToLike.likes + 1, user: blogToLike.user.id })
+    updatedBlog.user = blogToLike.user
     setBlogs(blogs.map(blog => (
       blog.id === updatedBlog.id ? updatedBlog : blog
     )))
