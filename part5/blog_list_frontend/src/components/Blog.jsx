@@ -18,7 +18,7 @@ const Blog = ({ blog, likeBlog, removeBlog }) => {
   const toggleVisibility = () => setIsVisible(!isVisible)
 
   return (
-    <div style={ blogStyle }>
+    <div style={ blogStyle } className='blog' >
       { blog.title } { blog.author }
       <button onClick={ toggleVisibility }>{ isVisible ? 'Hide' : 'Show' }</button>
       { isVisible && (
