@@ -36,7 +36,7 @@ const NewBlogForm = ({ addBlogToList, setNotification, closeForm }) => {
 
         <div>
           Title:
-          <input
+          <input className='titleInput'
             value={ title }
             onChange={ handleTitleChange }
           />
@@ -44,7 +44,7 @@ const NewBlogForm = ({ addBlogToList, setNotification, closeForm }) => {
 
         <div>
           Author:
-          <input
+          <input className='authorInput'
             value={ author }
             onChange={ handleAuthorChange }
           />
@@ -52,13 +52,13 @@ const NewBlogForm = ({ addBlogToList, setNotification, closeForm }) => {
 
         <div>
           URL:
-          <input
+          <input className='urlInput'
             value={ url }
             onChange={ handleUrlChange }
           />
         </div>
 
-        <button type="submit">Create</button>
+        <button type="submit" className='submitButton' >Create</button>
 
       </form>
 
