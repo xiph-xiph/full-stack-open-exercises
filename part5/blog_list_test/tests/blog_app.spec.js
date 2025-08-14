@@ -1,4 +1,5 @@
-import { beforeEach, describe, test, expect } from '@playwright/test'
+import { beforeEach, describe, test, expect, afterAll } from '@playwright/test'
+import { after } from 'node:test'
 
 describe('Blog app', () => {
   beforeEach(async ({ page, request }) => {
@@ -68,7 +69,23 @@ describe('Blog app', () => {
       await expect(page.getByText('likes: 1')).toBeVisible()
       await page.getByRole('button', { name:'Like' }).click()
       await expect(page.getByText('likes: 2')).toBeVisible()
+    })
 
+    test('a blog can be removed', async ({ page }) => {
+      await page.getByRole('button', { name:'Add new blog' }).click()
+      await page.getByText('Title:').getByRole('textbox').fill('My Test Blog For Testing')
+      await page.getByText('Author:').getByRole('textbox').fill('John Cena')
+      await page.getByText('URL:').getByRole('textbox').fill('www.testblog.com')
+      await page.getByRole('button', { name:'Create' }).click()
+
+      await page.getByRole('button', { name:'Show' }).click()
+      page.on('dialog', dialog => dialog.accept())
+      await page.getByRole('button', { name:'Remove' }).click()
+      await expect(page.getByText('My Test Blog For Testing John Cena')).not.toBeVisible()
     })
   })
+})
+
+afterAll(async ({ request }) => {
+    await request.post('http://localhost:3003/api/testing/reset')
 })
