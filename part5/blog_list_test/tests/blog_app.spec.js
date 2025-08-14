@@ -98,6 +98,40 @@ describe('Blog app', () => {
         await expect(page.getByRole('button', { name: 'Remove' })).not.toBeVisible()
       })
     })
+
+    test('Blogs are sorted by amount of likes', async ({ page }) => {
+      await page.getByRole('button', { name: 'Add new blog' }).click()
+      await page.getByText('Title:').getByRole('textbox').fill('My First Test Blog For Testing')
+      await page.getByText('Author:').getByRole('textbox').fill('John Cena')
+      await page.getByText('URL:').getByRole('textbox').fill('www.testblog1.com')
+      await page.getByRole('button', { name: 'Create' }).click()
+
+      await page.getByRole('button', { name: 'Add new blog' }).click()
+      await page.getByText('Title:').getByRole('textbox').fill('My Second Test Blog For Testing')
+      await page.getByText('Author:').getByRole('textbox').fill('Cena John')
+      await page.getByText('URL:').getByRole('textbox').fill('www.testblog2.com')
+      await page.getByRole('button', { name: 'Create' }).click()
+
+      await page.getByRole('button', { name: 'Add new blog' }).click()
+      await page.getByText('Title:').getByRole('textbox').fill('My Third Test Blog For Testing')
+      await page.getByText('Author:').getByRole('textbox').fill('You Can\'t See Me')
+      await page.getByText('URL:').getByRole('textbox').fill('www.testblog3.com')
+      await page.getByRole('button', { name: 'Create' }).click()
+
+      await page.getByRole('button', { name: 'Show' }).first().click()
+      await page.getByRole('button', { name: 'Show' }).first().click()
+      await page.getByRole('button', { name: 'Show' }).first().click()
+
+      await page.getByRole('button', { name: 'Like' }).last().click()
+      await page.waitForTimeout(300)
+      await page.getByRole('button', { name: 'Like' }).last().click()
+      await page.waitForTimeout(300)
+      await page.getByRole('button', { name: 'Like' }).last().click()
+      await page.waitForTimeout(300)
+      await page.getByRole('button', { name: 'Like' }).last().click()
+
+      await expect(page.getByText('likes: 2')).toBeVisible()
+    })
   })
 })
 
