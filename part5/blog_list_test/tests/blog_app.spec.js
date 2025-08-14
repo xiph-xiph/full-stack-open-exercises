@@ -120,7 +120,7 @@ describe('Blog app', () => {
 
       await page.getByRole('button', { name: 'Show' }).first().click()
       await page.getByRole('button', { name: 'Show' }).first().click()
-      await page.getByRole('button', { name: 'Show' }).first().click()
+      await page.getByRole('button', { name: 'Show' }).click()
 
       await page.getByRole('button', { name: 'Like' }).last().click()
       await page.waitForTimeout(300)
@@ -131,6 +131,7 @@ describe('Blog app', () => {
       await page.getByRole('button', { name: 'Like' }).last().click()
 
       await expect(page.getByText('likes: 2')).toBeVisible()
+      await expect(page.getByText('likes: 1')).toHaveCount(2)
     })
   })
 })
