@@ -5,8 +5,8 @@ import User from '../models/user.js'
 const testingRouter = Router()
 
 testingRouter.post('/reset', async (request, response) => {
-  Blog.deleteMany({})
-  User.deleteMany({})
+  await User.deleteMany({})
+  await Blog.deleteMany({})
   response.status(204).end()
 })
 
