@@ -57,31 +57,29 @@ describe('Blog app', () => {
       await expect(page.getByText('My Test Blog For Testing John Cena')).toBeVisible()
     })
     
-    test('a blog can be liked', async ({ page }) => {
-      await page.getByRole('button', { name:'Add new blog' }).click()
-      await page.getByText('Title:').getByRole('textbox').fill('My Test Blog For Testing')
-      await page.getByText('Author:').getByRole('textbox').fill('John Cena')
-      await page.getByText('URL:').getByRole('textbox').fill('www.testblog.com')
-      await page.getByRole('button', { name:'Create' }).click()
+    describe('and a blog is created', () => {
+      beforeEach(async ({ page }) => {
+        await page.getByRole('button', { name:'Add new blog' }).click()
+        await page.getByText('Title:').getByRole('textbox').fill('My Test Blog For Testing')
+        await page.getByText('Author:').getByRole('textbox').fill('John Cena')
+        await page.getByText('URL:').getByRole('textbox').fill('www.testblog.com')
+        await page.getByRole('button', { name:'Create' }).click()
+      })
 
-      await page.getByRole('button', { name:'Show' }).click()
-      await page.getByRole('button', { name:'Like' }).click()
-      await expect(page.getByText('likes: 1')).toBeVisible()
-      await page.getByRole('button', { name:'Like' }).click()
-      await expect(page.getByText('likes: 2')).toBeVisible()
-    })
+      test('the blog can be liked', async ({ page }) => {
+        await page.getByRole('button', { name:'Show' }).click()
+        await page.getByRole('button', { name:'Like' }).click()
+        await expect(page.getByText('likes: 1')).toBeVisible()
+        await page.getByRole('button', { name:'Like' }).click()
+        await expect(page.getByText('likes: 2')).toBeVisible()
+      })
 
-    test('a blog can be removed', async ({ page }) => {
-      await page.getByRole('button', { name:'Add new blog' }).click()
-      await page.getByText('Title:').getByRole('textbox').fill('My Test Blog For Testing')
-      await page.getByText('Author:').getByRole('textbox').fill('John Cena')
-      await page.getByText('URL:').getByRole('textbox').fill('www.testblog.com')
-      await page.getByRole('button', { name:'Create' }).click()
-
-      await page.getByRole('button', { name:'Show' }).click()
-      page.on('dialog', dialog => dialog.accept())
-      await page.getByRole('button', { name:'Remove' }).click()
-      await expect(page.getByText('My Test Blog For Testing John Cena')).not.toBeVisible()
+      test('the blog can be removed', async ({ page }) => {
+        await page.getByRole('button', { name:'Show' }).click()
+        page.on('dialog', dialog => dialog.accept())
+        await page.getByRole('button', { name:'Remove' }).click()
+        await expect(page.getByText('My Test Blog For Testing John Cena')).not.toBeVisible()
+      })
     })
   })
 })
