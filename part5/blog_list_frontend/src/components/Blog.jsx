@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
 
-const Blog = ({ blog, likeBlog, removeBlog }) => {
+const Blog = ({ blog, likeBlog, removeBlog, ownedByUser }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -26,7 +26,7 @@ const Blog = ({ blog, likeBlog, removeBlog }) => {
           <div>{ blog.url }</div>
           <div>{ 'likes: ' + blog.likes } <button onClick={ handleLike } className='likeButton' >Like</button></div>
           <div>{ blog.user.name }</div>
-          <button onClick={ handleRemove }>Remove</button>
+          { ownedByUser ? <button onClick={ handleRemove }>Remove</button> : <></> }
         </>
       )}
     </div>

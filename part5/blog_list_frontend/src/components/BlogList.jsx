@@ -75,7 +75,7 @@ const BlogList = ({ user, handleLogout }) => {
       <Toggleable buttonLabel='Add new blog' ref={ blogFormRef }>
         <NewBlogForm addBlogToList={ addBlogToList } setNotification={ setNotification } closeForm={ closeForm }/>
       </Toggleable>
-      { sortedBlogs.map(blog => <Blog key={ blog.id } blog={ blog } likeBlog={ likeBlog } removeBlog={ removeBlog } /> ) }
+      { sortedBlogs.map(blog => <Blog key={ blog.id } blog={ blog } likeBlog={ likeBlog } removeBlog={ removeBlog } ownedByUser={ blog.user.username === user.username } /> ) }
     </>
   )
 }

@@ -14,7 +14,8 @@ blogsRouter.get('/', async (request, response) => {
 blogsRouter.post('/', userExtractor, async (request, response) => {
   const newBlog = new Blog({ ...request.body, user: request.user.id })
   const savedBlog = await newBlog.save()
-  response.status(201).json(savedBlog)
+  const populatedBlog = await Blog.findById(savedBlog._id).populate('user', { username: 1, name: 1, id: 1 })
+  response.status(201).json(populatedBlog)
   logger.info(`Added ${savedBlog.title} to the database.`)
 })
 
