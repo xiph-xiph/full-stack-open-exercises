@@ -41,5 +41,6 @@ describe('Login API POST /api/login', () => {
 })
 
 after(async () => {
+  await User.deleteMany({})
   await mongoose.connection.close()
 })

@@ -84,5 +84,6 @@ describe('User API POST /api/users', () => {
 })
 
 after(async () => {
+  await User.deleteMany({})
   await mongoose.connection.close()
 })

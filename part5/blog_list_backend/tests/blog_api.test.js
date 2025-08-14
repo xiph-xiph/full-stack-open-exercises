@@ -335,5 +335,6 @@ describe('Blog API PATCH /api/blogs/:id', () => {
 })
 
 after(async () => {
+  await Blog.deleteMany({})
   await mongoose.connection.close()
 })
