@@ -6,4 +6,8 @@ const getAllAnecdotes = async () => (await axios.get(baseUrl)).data
 
 const createNewAnecdote = async (anecdote) => (await axios.post(baseUrl, anecdote)).data
 
-export default { getAllAnecdotes, createNewAnecdote }
+const getAnecdoteById = async (id) => (await axios.get(`${baseUrl}/${id}`)).data
+
+const changeAnecdote = async (anecdote) => (await axios.put(`${baseUrl}/${anecdote.id}`, anecdote))
+
+export default { getAllAnecdotes, createNewAnecdote, getAnecdoteById, changeAnecdote }
