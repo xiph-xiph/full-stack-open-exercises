@@ -1,8 +1,12 @@
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
 import { getAllAnecdotes, updateAnecdote } from '../services/anecdoteService'
+import { useContext } from 'react'
+import NotificationContext from '../context/NotificationContext'
 
 const AnecdoteList = () => {
   const queryClient = useQueryClient()
+
+  const [_notification, dispatch] = useContext(NotificationContext)
 
   const result = useQuery({
     queryKey: ['anecdotes'],
@@ -19,8 +23,8 @@ const AnecdoteList = () => {
   })
 
   const handleVote = (anecdote) => {
-    console.log(anecdote)
     voteAnecdoteMutation.mutate({ ...anecdote, votes: anecdote.votes + 1 })
+    dispatch(`you voted '${ anecdote.content }'`)
   }
 
   if (result.isLoading) return <div>Loading data...</div>
