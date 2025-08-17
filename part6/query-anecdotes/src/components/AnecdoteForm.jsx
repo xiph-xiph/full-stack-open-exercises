@@ -14,11 +14,11 @@ const AnecdoteForm = () => {
 
   const onCreate = (event) => {
     event.preventDefault()
-    event.target.anecdote.value = ''
     newAnecdoteMutation.mutate({
       content: event.target.anecdote.value,
       votes: 0
     })
+    event.target.anecdote.value = ''
   }
 
   return (
