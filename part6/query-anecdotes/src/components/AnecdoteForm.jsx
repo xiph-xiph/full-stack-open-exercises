@@ -13,6 +13,10 @@ const AnecdoteForm = () => {
     onSuccess: newAnecdote => {
       const anecdotes = queryClient.getQueryData(['anecdotes'])
       queryClient.setQueryData(['anecdotes'], anecdotes.concat(newAnecdote))
+      dispatch(`you created '${ newAnecdote }`)
+    },
+    onError: error => {
+      dispatch(`failed to create anecdote: ${ error?.response?.data?.error }`)
     }
   })
 
@@ -22,7 +26,6 @@ const AnecdoteForm = () => {
       content: event.target.anecdote.value,
       votes: 0
     })
-    dispatch(`you created '${ event.target.anecdote.value }`)
     event.target.anecdote.value = ''
   }
 
