@@ -20,7 +20,7 @@ export const NotificationContextProvider = ({ children }) => {
     clearTimeout(notification.timeout)
     const timeout = setTimeout(() => {
       notificationDispatch({ type: 'CLEAR' })
-    }, 2000)
+    }, 5000)
     notificationDispatch({ type: 'SET', payload: { message: newNotification, timeout } })
   }
 
