@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Routes, Route, Link, useParams } from 'react-router'
+import { Routes, Route, Link, useParams, useNavigate } from 'react-router'
 
 const Menu = () => {
   const padding = {
@@ -32,13 +32,13 @@ const AnecdoteDetails = ({ anecdotes }) => {
   }
 
   return (
-  <div>
-    <h2>{ anecdote.content }</h2>
-    <p>{ `has ${ anecdote.votes } votes` }</p>
-    {
-      anecdote.info ? <p>for more info see {<a href={anecdote.info}>{anecdote.info}</a>}</p> : <></>
-    }
-  </div>
+    <div>
+      <h2>{ anecdote.content }</h2>
+      <p>{ `has ${ anecdote.votes } votes` }</p>
+      {
+        anecdote.info ? <p>for more info see {<a href={anecdote.info}>{anecdote.info}</a>}</p> : <></>
+      }
+    </div>
   )
 }
 
@@ -69,6 +69,7 @@ const CreateNew = (props) => {
   const [author, setAuthor] = useState('')
   const [info, setInfo] = useState('')
 
+  const navigate = useNavigate()
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -78,6 +79,8 @@ const CreateNew = (props) => {
       info,
       votes: 0
     })
+    props.displayNotification(`a new anecdote '${ content }' created!`)
+    navigate('/')
   }
 
   return (
@@ -94,7 +97,7 @@ const CreateNew = (props) => {
         </div>
         <div>
           url for more info
-          <input name='info' value={info} onChange={(e)=> setInfo(e.target.value)} />
+          <input name='info' value={info} onChange={(e) => setInfo(e.target.value)} />
         </div>
         <button>create</button>
       </form>
@@ -122,6 +125,16 @@ const App = () => {
   ])
 
   const [notification, setNotification] = useState('')
+  const [notificationTimeout, setNotificationTimeout] = useState(-1)
+
+  const displayNotification = (message, duration=5) => {
+    clearTimeout(notificationTimeout)
+    setNotification(message)
+    const timeout = setTimeout(() => {
+      setNotification('')
+    }, duration * 1000)
+    setNotificationTimeout(timeout)
+  }
 
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000)
@@ -146,12 +159,13 @@ const App = () => {
     <div>
       <h1>Software anecdotes</h1>
       <Menu />
-        <Routes>
-          <Route path='/' element={ <AnecdoteList anecdotes={anecdotes} /> } />
-          <Route path='/about' element={ <About /> } />
-          <Route path='/create' element={ <CreateNew addNew={addNew} /> } />
-          <Route path='/anecdotes/:id' element={ <AnecdoteDetails anecdotes={ anecdotes }/> } />
-        </Routes>
+      <div>{ notification }</div>
+      <Routes>
+        <Route path='/' element={ <AnecdoteList anecdotes={ anecdotes } /> } />
+        <Route path='/about' element={ <About /> } />
+        <Route path='/create' element={ <CreateNew addNew={ addNew } displayNotification={ displayNotification }/> } />
+        <Route path='/anecdotes/:id' element={ <AnecdoteDetails anecdotes={ anecdotes }/> } />
+      </Routes>
       <Footer />
     </div>
   )
