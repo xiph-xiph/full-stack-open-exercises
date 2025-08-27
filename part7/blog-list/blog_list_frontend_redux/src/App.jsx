@@ -1,37 +1,31 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser } from "./reducers/userReducer";
 import Notification from "./components/Notification";
 import BlogList from "./components/BlogList";
 import LoginForm from "./components/LoginForm";
 import blogService from "./services/blogs";
 
 const App = () => {
-  const [user, setUser] = useState(null);
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user);
 
   useEffect(() => {
     const loggedInUser = window.localStorage.getItem("user");
     if (loggedInUser) {
-      setUser(JSON.parse(loggedInUser));
+      dispatch(setUser(JSON.parse(loggedInUser)));
     }
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
-    window.localStorage.setItem("user", JSON.stringify(user));
+    user && window.localStorage.setItem("user", JSON.stringify(user));
     blogService.setToken(user?.token);
   }, [user]);
-
-  const handleLogout = () => {
-    window.localStorage.clear();
-    setUser(null);
-  };
 
   return (
     <div>
       <Notification />
-      {user ? (
-        <BlogList user={user} handleLogout={handleLogout} />
-      ) : (
-        <LoginForm setUser={setUser} />
-      )}
+      {user ? <BlogList /> : <LoginForm />}
     </div>
   );
 };
