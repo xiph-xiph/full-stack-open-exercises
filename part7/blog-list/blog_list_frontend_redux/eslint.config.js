@@ -28,7 +28,6 @@ export default defineConfig([
     },
     rules: {
       "no-unused-vars": ["error", { varsIgnorePattern: "^[A-Z_]" }],
-      indent: ["error", 2],
       "linebreak-style": ["error", "unix"],
       eqeqeq: "error",
       "no-trailing-spaces": "error",

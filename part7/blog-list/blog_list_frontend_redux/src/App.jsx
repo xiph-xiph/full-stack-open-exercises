@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Notification from "./components/Notification";
 import BlogList from "./components/BlogList";
 import LoginForm from "./components/LoginForm";
 import blogService from "./services/blogs";
@@ -25,6 +26,7 @@ const App = () => {
 
   return (
     <div>
+      <Notification />
       {user ? (
         <BlogList user={user} handleLogout={handleLogout} />
       ) : (

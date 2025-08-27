@@ -1,20 +1,11 @@
-import { useState, useEffect } from "react";
-import Notification from "./Notification";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { setNotification } from "../reducers/notificationReducer";
 import loginService from "../services/login";
 import PropTypes from "prop-types";
 
 const LoginForm = ({ setUser }) => {
-  const [notifMessage, setNotifMessage] = useState("");
-  const [notifIsError, setNotifIsError] = useState(false);
-  useEffect(() => {
-    if (notifMessage) {
-      const timer = setTimeout(() => {
-        setNotifMessage("");
-        setNotifIsError(false);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [notifMessage]);
+  const dispatch = useDispatch();
 
   const [username, setUsername] = useState("");
   const handleUsernameChange = (event) => {
@@ -33,15 +24,14 @@ const LoginForm = ({ setUser }) => {
       setUser(user);
       setUsername("");
       setPassword("");
+      dispatch(setNotification("Logged in succesfully", false));
     } catch (error) {
-      setNotifMessage(error.response?.data?.error);
-      setNotifIsError(true);
+      dispatch(setNotification(error.response?.data?.error, true));
     }
   };
 
   return (
     <>
-      <Notification message={notifMessage} isError={notifIsError} />
       <form onSubmit={handleSubmit}>
         <div>
           Username

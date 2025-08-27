@@ -1,8 +1,12 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { setNotification } from "../reducers/notificationReducer";
 import blogService from "../services/blogs";
 import PropTypes from "prop-types";
 
-const NewBlogForm = ({ addBlogToList, setNotification, closeForm }) => {
+const NewBlogForm = ({ addBlogToList, closeForm }) => {
+  const dispatch = useDispatch();
+
   const [title, setTitle] = useState("");
   const handleTitleChange = (event) => {
     setTitle(event.target.value);
@@ -23,10 +27,12 @@ const NewBlogForm = ({ addBlogToList, setNotification, closeForm }) => {
     try {
       const createdBlog = await blogService.addNew({ title, author, url });
       addBlogToList(createdBlog);
-      setNotification(`New blog "${title}" by ${author} added.`);
+      dispatch(
+        setNotification(`New blog "${title}" by ${author} added.`, false),
+      );
       closeForm();
     } catch (error) {
-      setNotification(error.response?.data?.error, true);
+      dispatch(setNotification(error.response?.data?.error, true));
     }
   };
 
