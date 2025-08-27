@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from "react";
-import { useDispatch } from "react-redux";
+import { useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { setNotification } from "../reducers/notificationReducer";
+import { setBlogs, addBlog } from "../reducers/blogsReducer";
 import Toggleable from "./Toggleable";
 import Blog from "./Blog";
 import NewBlogForm from "./NewBlogForm";
@@ -10,28 +11,21 @@ import PropTypes from "prop-types";
 const BlogList = ({ user, handleLogout }) => {
   const dispatch = useDispatch();
 
-  const [blogs, setBlogs] = useState([]);
+  const blogs = useSelector((state) => state.blogs);
 
   useEffect(() => {
     const fetchBlogs = async () => {
       const blogs = await blogService.getAll();
-      setBlogs(blogs);
+      dispatch(setBlogs(blogs));
     };
     fetchBlogs();
-  }, []);
-
-  const [sortedBlogs, setSortedBlogs] = useState([]);
-
-  useEffect(() => {
-    setSortedBlogs(blogs.sort((a, b) => b.likes - a.likes));
-  }, [blogs]);
+  }, [dispatch]);
 
   const blogFormRef = useRef();
-
   const closeForm = () => blogFormRef.current.toggleVisibility();
 
   const addBlogToList = (newBlog) => {
-    setBlogs([...blogs, newBlog]);
+    dispatch(addBlog(newBlog));
   };
 
   const likeBlog = async (blogToLike) => {
@@ -65,7 +59,7 @@ const BlogList = ({ user, handleLogout }) => {
       <Toggleable buttonLabel="Add new blog" ref={blogFormRef}>
         <NewBlogForm addBlogToList={addBlogToList} closeForm={closeForm} />
       </Toggleable>
-      {sortedBlogs.map((blog) => (
+      {blogs.map((blog) => (
         <Blog
           key={blog.id}
           blog={blog}
