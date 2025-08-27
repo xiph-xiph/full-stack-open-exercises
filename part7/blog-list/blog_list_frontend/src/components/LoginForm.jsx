@@ -1,57 +1,51 @@
-import { useState, useEffect } from 'react'
-import Notification from './Notification'
-import loginService from '../services/login'
-import PropTypes from 'prop-types'
+import { useState, useEffect } from "react";
+import Notification from "./Notification";
+import loginService from "../services/login";
+import PropTypes from "prop-types";
 
 const LoginForm = ({ setUser }) => {
-  const [notifMessage, setNotifMessage] = useState('')
-  const [notifIsError, setNotifIsError] = useState(false)
+  const [notifMessage, setNotifMessage] = useState("");
+  const [notifIsError, setNotifIsError] = useState(false);
   useEffect(() => {
     if (notifMessage) {
       const timer = setTimeout(() => {
-        setNotifMessage('')
-        setNotifIsError(false)
-      }, 3000)
-      return () => clearTimeout(timer)
+        setNotifMessage("");
+        setNotifIsError(false);
+      }, 3000);
+      return () => clearTimeout(timer);
     }
-  }, [notifMessage])
+  }, [notifMessage]);
 
-  const [username, setUsername] = useState('')
+  const [username, setUsername] = useState("");
   const handleUsernameChange = (event) => {
-    setUsername(event.target.value)
-  }
+    setUsername(event.target.value);
+  };
 
-  const [password, setPassword] = useState('')
+  const [password, setPassword] = useState("");
   const handlePasswordChange = (event) => {
-    setPassword(event.target.value)
-  }
-
+    setPassword(event.target.value);
+  };
 
   const handleSubmit = async (event) => {
-    event.preventDefault()
+    event.preventDefault();
     try {
-      const user = await loginService.login(username, password)
-      setUser(user)
-      setUsername('')
-      setPassword('')
+      const user = await loginService.login(username, password);
+      setUser(user);
+      setUsername("");
+      setPassword("");
     } catch (error) {
-      setNotifMessage(error.response?.data?.error)
-      setNotifIsError(true)
+      setNotifMessage(error.response?.data?.error);
+      setNotifIsError(true);
     }
-
-  }
+  };
 
   return (
     <>
-      <Notification message={ notifMessage } isError={ notifIsError } />
+      <Notification message={notifMessage} isError={notifIsError} />
       <form onSubmit={handleSubmit}>
-
         <div>
           Username
-          <input
-            value={username}
-            onChange={handleUsernameChange}
-          />
+          <input value={username} onChange={handleUsernameChange} />
         </div>
 
         <div>
@@ -64,14 +58,13 @@ const LoginForm = ({ setUser }) => {
         </div>
 
         <button type="submit">Login</button>
-
       </form>
     </>
-  )
-}
+  );
+};
 
 LoginForm.propTypes = {
-  setUser: PropTypes.func.isRequired
-}
+  setUser: PropTypes.func.isRequired,
+};
 
-export default LoginForm
+export default LoginForm;

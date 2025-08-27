@@ -1,81 +1,81 @@
-import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import Blog from './Blog'
-describe('Blog component', () => {
-  test('Contains title and author when not clicked, but not url, likes, or user', () => {
+import { render } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import Blog from "./Blog";
+describe("Blog component", () => {
+  test("Contains title and author when not clicked, but not url, likes, or user", () => {
     const blog = {
-      title: 'Test Blog For Testing',
-      author: 'Professor Docter Test Kees',
-      url: 'www.tralala.com',
+      title: "Test Blog For Testing",
+      author: "Professor Docter Test Kees",
+      url: "www.tralala.com",
       likes: 4,
       user: {
-        username: 'starlord982',
-        name: 'Heinz Doofenshmirtz'
-      }
-    }
+        username: "starlord982",
+        name: "Heinz Doofenshmirtz",
+      },
+    };
 
-    const { container } = render(<Blog blog={ blog } />)
-    const div = container.querySelector('.blog')
+    const { container } = render(<Blog blog={blog} />);
+    const div = container.querySelector(".blog");
 
-    expect(div).toHaveTextContent(/Test Blog For Testing/)
-    expect(div).toHaveTextContent(/Professor Docter Test Kees/)
-    expect(div).not.toHaveTextContent(/www.tralala.com/)
-    expect(div).not.toHaveTextContent(/4/)
-    expect(div).not.toHaveTextContent(/starlord982/)
-    expect(div).not.toHaveTextContent(/Heinz Doofenshmirtz/)
-  })
+    expect(div).toHaveTextContent(/Test Blog For Testing/);
+    expect(div).toHaveTextContent(/Professor Docter Test Kees/);
+    expect(div).not.toHaveTextContent(/www.tralala.com/);
+    expect(div).not.toHaveTextContent(/4/);
+    expect(div).not.toHaveTextContent(/starlord982/);
+    expect(div).not.toHaveTextContent(/Heinz Doofenshmirtz/);
+  });
 
-  test('Contains title, author, url, likes, and user\'s name when clicked', async () => {
+  test("Contains title, author, url, likes, and user's name when clicked", async () => {
     const blog = {
-      title: 'Test Blog For Testing',
-      author: 'Professor Docter Test Kees',
-      url: 'www.tralala.com',
+      title: "Test Blog For Testing",
+      author: "Professor Docter Test Kees",
+      url: "www.tralala.com",
       likes: 4,
       user: {
-        username: 'starlord982',
-        name: 'Heinz Doofenshmirtz'
-      }
-    }
+        username: "starlord982",
+        name: "Heinz Doofenshmirtz",
+      },
+    };
 
-    const { container } = render(<Blog blog={ blog } />)
-    const div = container.querySelector('.blog')
-    const button = container.querySelector('.visButton')
+    const { container } = render(<Blog blog={blog} />);
+    const div = container.querySelector(".blog");
+    const button = container.querySelector(".visButton");
 
-    const user = userEvent.setup()
-    await user.click(button)
+    const user = userEvent.setup();
+    await user.click(button);
 
-    expect(div).toHaveTextContent(/Test Blog For Testing/)
-    expect(div).toHaveTextContent(/Professor Docter Test Kees/)
-    expect(div).toHaveTextContent(/www.tralala.com/)
-    expect(div).toHaveTextContent(/likes: 4/)
-    expect(div).toHaveTextContent(/Heinz Doofenshmirtz/)
-    expect(div).not.toHaveTextContent(/starlord982/)
-  })
+    expect(div).toHaveTextContent(/Test Blog For Testing/);
+    expect(div).toHaveTextContent(/Professor Docter Test Kees/);
+    expect(div).toHaveTextContent(/www.tralala.com/);
+    expect(div).toHaveTextContent(/likes: 4/);
+    expect(div).toHaveTextContent(/Heinz Doofenshmirtz/);
+    expect(div).not.toHaveTextContent(/starlord982/);
+  });
 
-  test('Calls the likeBlog function passed as prop twice when the like button is clicked twice', async () => {
+  test("Calls the likeBlog function passed as prop twice when the like button is clicked twice", async () => {
     const blog = {
-      title: 'Test Blog For Testing',
-      author: 'Professor Docter Test Kees',
-      url: 'www.tralala.com',
+      title: "Test Blog For Testing",
+      author: "Professor Docter Test Kees",
+      url: "www.tralala.com",
       likes: 4,
       user: {
-        username: 'starlord982',
-        name: 'Heinz Doofenshmirtz'
-      }
-    }
+        username: "starlord982",
+        name: "Heinz Doofenshmirtz",
+      },
+    };
 
-    const mockHandler = vi.fn()
+    const mockHandler = vi.fn();
 
-    const { container } = render(<Blog blog={ blog } likeBlog={ mockHandler } />)
-    const visButton = container.querySelector('.visButton')
+    const { container } = render(<Blog blog={blog} likeBlog={mockHandler} />);
+    const visButton = container.querySelector(".visButton");
 
-    const user = userEvent.setup()
-    await user.click(visButton)
+    const user = userEvent.setup();
+    await user.click(visButton);
 
-    const likeButton = container.querySelector('.likeButton')
-    await user.click(likeButton)
-    await user.click(likeButton)
+    const likeButton = container.querySelector(".likeButton");
+    await user.click(likeButton);
+    await user.click(likeButton);
 
-    expect(mockHandler.mock.calls).toHaveLength(2)
-  })
-})
+    expect(mockHandler.mock.calls).toHaveLength(2);
+  });
+});

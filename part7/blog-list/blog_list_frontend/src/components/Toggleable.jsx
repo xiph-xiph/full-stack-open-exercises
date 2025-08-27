@@ -1,32 +1,28 @@
-import { useState, useImperativeHandle } from 'react'
-import PropTypes from 'prop-types'
+import { useState, useImperativeHandle } from "react";
+import PropTypes from "prop-types";
 
 const Toggleable = ({ children, buttonLabel, ref }) => {
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(false);
 
-  const toggleVisibility = () => setVisible(!visible)
+  const toggleVisibility = () => setVisible(!visible);
 
   useImperativeHandle(ref, () => {
-    return { toggleVisibility }
-  })
-
-
+    return { toggleVisibility };
+  });
 
   return (
     <>
-      { visible ? (
+      {visible ? (
         children
       ) : (
-        <button onClick={ toggleVisibility }>
-          { buttonLabel }
-        </button>
+        <button onClick={toggleVisibility}>{buttonLabel}</button>
       )}
     </>
-  )
-}
+  );
+};
 
 Toggleable.propTypes = {
-  buttonLabel: PropTypes.string.isRequired
-}
+  buttonLabel: PropTypes.string.isRequired,
+};
 
-export default Toggleable
+export default Toggleable;
