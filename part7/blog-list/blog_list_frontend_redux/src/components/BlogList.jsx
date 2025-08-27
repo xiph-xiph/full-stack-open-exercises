@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setNotification } from "../reducers/notificationReducer";
 import { setBlogs, addBlog } from "../reducers/blogsReducer";
 import Toggleable from "./Toggleable";
 import Blog from "./Blog";
@@ -28,26 +27,6 @@ const BlogList = ({ user, handleLogout }) => {
     dispatch(addBlog(newBlog));
   };
 
-  const likeBlog = async (blogToLike) => {
-    const updatedBlog = await blogService.update({
-      ...blogToLike,
-      likes: blogToLike.likes + 1,
-      user: blogToLike.user.id,
-    });
-    updatedBlog.user = blogToLike.user;
-    setBlogs(
-      blogs.map((blog) => (blog.id === updatedBlog.id ? updatedBlog : blog)),
-    );
-  };
-
-  const removeBlog = async (blogToRemove) => {
-    await blogService.remove(blogToRemove.id);
-    setBlogs(blogs.filter((blog) => blog.id !== blogToRemove.id));
-    dispatch(
-      setNotification(`Blog "${blogToRemove.title}" succesfully removed`),
-    );
-  };
-
   return (
     <>
       <h2>Blogs</h2>
@@ -63,8 +42,6 @@ const BlogList = ({ user, handleLogout }) => {
         <Blog
           key={blog.id}
           blog={blog}
-          likeBlog={likeBlog}
-          removeBlog={removeBlog}
           ownedByUser={blog.user.username === user.username}
         />
       ))}

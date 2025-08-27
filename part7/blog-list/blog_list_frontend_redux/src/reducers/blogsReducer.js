@@ -12,11 +12,15 @@ const blogSlice = createSlice({
       state.sort((a, b) => b.likes - a.likes);
     },
     deleteBlog(state, action) {
-      state.filter((blog) => blog.id !== action.payload);
+      return state.filter((blog) => blog.id !== action.payload);
+    },
+    likeBlog(state, action) {
+      const blogToLike = state.find((blog) => blog.id === action.payload);
+      blogToLike.likes += 1;
     },
   },
 });
 
-export const { setBlogs, addBlog, deleteBlog } = blogSlice.actions;
+export const { setBlogs, addBlog, deleteBlog, likeBlog } = blogSlice.actions;
 
 export default blogSlice.reducer;
