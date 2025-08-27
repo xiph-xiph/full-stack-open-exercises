@@ -1,5 +1,7 @@
 import { render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { Provider } from "react-redux";
+import store from "../store";
 import NewBlogForm from "./NewBlogForm";
 
 describe("NewBlogForm component", () => {
@@ -18,11 +20,13 @@ describe("NewBlogForm component", () => {
     const closeForm = vi.fn();
 
     const { container } = render(
-      <NewBlogForm
-        addBlogToList={addBlogToList}
-        closeForm={closeForm}
-        setNotification={setNotification}
-      />,
+      <Provider store={store}>
+        <NewBlogForm
+          addBlogToList={addBlogToList}
+          closeForm={closeForm}
+          setNotification={setNotification}
+        />
+      </Provider>,
     );
     const titleInput = container.querySelector(".titleInput");
     const authorInput = container.querySelector(".authorInput");

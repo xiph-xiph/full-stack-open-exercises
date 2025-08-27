@@ -1,5 +1,7 @@
 import { render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { Provider } from "react-redux";
+import store from "../store";
 import Blog from "./Blog";
 describe("Blog component", () => {
   test("Contains title and author when not clicked, but not url, likes, or user", () => {
@@ -14,7 +16,11 @@ describe("Blog component", () => {
       },
     };
 
-    const { container } = render(<Blog blog={blog} />);
+    const { container } = render(
+      <Provider store={store}>
+        <Blog blog={blog} />
+      </Provider>,
+    );
     const div = container.querySelector(".blog");
 
     expect(div).toHaveTextContent(/Test Blog For Testing/);
@@ -37,7 +43,11 @@ describe("Blog component", () => {
       },
     };
 
-    const { container } = render(<Blog blog={blog} />);
+    const { container } = render(
+      <Provider store={store}>
+        <Blog blog={blog} />
+      </Provider>,
+    );
     const div = container.querySelector(".blog");
     const button = container.querySelector(".visButton");
 
@@ -50,32 +60,5 @@ describe("Blog component", () => {
     expect(div).toHaveTextContent(/likes: 4/);
     expect(div).toHaveTextContent(/Heinz Doofenshmirtz/);
     expect(div).not.toHaveTextContent(/starlord982/);
-  });
-
-  test("Calls the likeBlog function passed as prop twice when the like button is clicked twice", async () => {
-    const blog = {
-      title: "Test Blog For Testing",
-      author: "Professor Docter Test Kees",
-      url: "www.tralala.com",
-      likes: 4,
-      user: {
-        username: "starlord982",
-        name: "Heinz Doofenshmirtz",
-      },
-    };
-
-    const mockHandler = vi.fn();
-
-    const { container } = render(<Blog blog={blog} likeBlog={mockHandler} />);
-    const visButton = container.querySelector(".visButton");
-
-    const user = userEvent.setup();
-    await user.click(visButton);
-
-    const likeButton = container.querySelector(".likeButton");
-    await user.click(likeButton);
-    await user.click(likeButton);
-
-    expect(mockHandler.mock.calls).toHaveLength(2);
   });
 });
