@@ -1,33 +1,22 @@
-import { useState, useEffect, useRef } from "react";
+import { useRef } from "react";
+import { useQuery } from "@tanstack/react-query";
+import blogService from "../services/blogs";
 import Toggleable from "./Toggleable";
 import Blog from "./Blog";
 import NewBlogForm from "./NewBlogForm";
 import Notification from "./Notification";
-import blogService from "../services/blogs";
 import PropTypes from "prop-types";
 
 const BlogList = ({ user, handleLogout }) => {
-  const [blogs, setBlogs] = useState([]);
-  useEffect(() => {
-    const fetchBlogs = async () => {
-      const blogs = await blogService.getAll();
-      setBlogs(blogs);
-    };
-    fetchBlogs();
-  }, []);
-
-  const [sortedBlogs, setSortedBlogs] = useState([]);
-  useEffect(() => {
-    setSortedBlogs(blogs.sort((a, b) => b.likes - a.likes));
-  }, [blogs]);
+  const blogQuery = useQuery({
+    queryKey: ["blogs"],
+    queryFn: blogService.getAll,
+  });
+  const blogs = blogQuery.data;
+  blogs && blogs.sort((a, b) => b.likes - a.likes);
 
   const blogFormRef = useRef();
-
   const closeForm = () => blogFormRef.current.toggleVisibility();
-
-  const addBlogToList = (newBlog) => {
-    setBlogs([...blogs, newBlog]);
-  };
 
   const likeBlog = async (blogToLike) => {
     const updatedBlog = await blogService.update({
@@ -36,15 +25,19 @@ const BlogList = ({ user, handleLogout }) => {
       user: blogToLike.user.id,
     });
     updatedBlog.user = blogToLike.user;
-    setBlogs(
-      blogs.map((blog) => (blog.id === updatedBlog.id ? updatedBlog : blog)),
-    );
+    // setBlogs(
+    //   blogs.map((blog) => (blog.id === updatedBlog.id ? updatedBlog : blog)),
+    // );
   };
 
   const removeBlog = async (blogToRemove) => {
     await blogService.remove(blogToRemove.id);
-    setBlogs(blogs.filter((blog) => blog.id !== blogToRemove.id));
+    // setBlogs(blogs.filter((blog) => blog.id !== blogToRemove.id));
   };
+
+  if (blogQuery.isLoading) {
+    return <div>loading data...</div>;
+  }
 
   return (
     <>
@@ -56,9 +49,9 @@ const BlogList = ({ user, handleLogout }) => {
       </p>
       <h2>Create new blog</h2>
       <Toggleable buttonLabel="Add new blog" ref={blogFormRef}>
-        <NewBlogForm addBlogToList={addBlogToList} closeForm={closeForm} />
+        <NewBlogForm closeForm={closeForm} />
       </Toggleable>
-      {sortedBlogs.map((blog) => (
+      {blogs.map((blog) => (
         <Blog
           key={blog.id}
           blog={blog}

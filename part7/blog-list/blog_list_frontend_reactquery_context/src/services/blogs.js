@@ -11,11 +11,11 @@ const getAll = async () => {
   return response.data;
 };
 
-const addNew = async (newObject) => {
+const addNew = async (newBlog) => {
   const config = {
     headers: { Authorization: token },
   };
-  const response = await axios.post(baseUrl, newObject, config);
+  const response = await axios.post(baseUrl, newBlog, config);
   return response.data;
 };
 

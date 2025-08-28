@@ -1,9 +1,10 @@
 import { useState, useContext } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import NotificationContext from "../context/NotificationContext";
 import blogService from "../services/blogs";
 import PropTypes from "prop-types";
 
-const NewBlogForm = ({ addBlogToList, closeForm }) => {
+const NewBlogForm = ({ closeForm }) => {
   const [_notification, setNotification] = useContext(NotificationContext);
 
   const [title, setTitle] = useState("");
@@ -21,11 +22,21 @@ const NewBlogForm = ({ addBlogToList, closeForm }) => {
     setUrl(event.target.value);
   };
 
+  const queryClient = useQueryClient();
+
+  const newBlogMutation = useMutation({
+    mutationFn: blogService.addNew,
+    onSuccess: (newBlog) => {
+      console.log(newBlog);
+      const blogs = queryClient.getQueryData(["blogs"]);
+      queryClient.setQueryData(["blogs"], blogs.concat(newBlog));
+    },
+  });
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const createdBlog = await blogService.addNew({ title, author, url });
-      addBlogToList(createdBlog);
+      newBlogMutation.mutate({ title, author, url });
       setNotification(`New blog "${title}" by ${author} added.`, false);
       closeForm();
     } catch (error) {
@@ -70,7 +81,6 @@ const NewBlogForm = ({ addBlogToList, closeForm }) => {
 };
 
 NewBlogForm.propTypes = {
-  addBlogToList: PropTypes.func.isRequired,
   closeForm: PropTypes.func.isRequired,
 };
 

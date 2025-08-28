@@ -4,13 +4,11 @@ import NotificationContext from "./NotificationContext";
 const reducer = (state, action) => {
   switch (action.type) {
     case "SET":
-      console.log(action.payload.message);
       return {
         message: action.payload.message,
         isError: action.payload?.isError ?? false,
       };
     case "CLEAR":
-      console.log("CLEARING RNNNGNGNNGNG");
       return {
         message: "",
         isError: false,
