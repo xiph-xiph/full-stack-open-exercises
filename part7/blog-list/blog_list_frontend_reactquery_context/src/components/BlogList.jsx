@@ -1,13 +1,13 @@
-import { useRef } from "react";
+import { useRef, useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
+import UserContext from "../context/UserContext";
 import blogService from "../services/blogs";
 import Toggleable from "./Toggleable";
 import Blog from "./Blog";
 import NewBlogForm from "./NewBlogForm";
-import Notification from "./Notification";
 import PropTypes from "prop-types";
 
-const BlogList = ({ user, handleLogout }) => {
+const BlogList = ({ handleLogout }) => {
   const blogQuery = useQuery({
     queryKey: ["blogs"],
     queryFn: blogService.getAll,
@@ -18,6 +18,8 @@ const BlogList = ({ user, handleLogout }) => {
   const blogFormRef = useRef();
   const closeForm = () => blogFormRef.current.toggleVisibility();
 
+  const [user, _userDispatch] = useContext(UserContext);
+
   if (blogQuery.isLoading) {
     return <div>loading data...</div>;
   }
@@ -25,7 +27,6 @@ const BlogList = ({ user, handleLogout }) => {
   return (
     <>
       <h2>Blogs</h2>
-      <Notification />
       <p>
         {user.name} is logged in
         <button onClick={handleLogout}>Logout</button>
@@ -35,11 +36,7 @@ const BlogList = ({ user, handleLogout }) => {
         <NewBlogForm closeForm={closeForm} />
       </Toggleable>
       {blogs.map((blog) => (
-        <Blog
-          key={blog.id}
-          blog={blog}
-          ownedByUser={blog.user.username === user.username}
-        />
+        <Blog key={blog.id} blog={blog} />
       ))}
     </>
   );

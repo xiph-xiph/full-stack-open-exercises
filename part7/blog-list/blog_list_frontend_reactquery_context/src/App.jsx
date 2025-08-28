@@ -1,37 +1,22 @@
-import { useState, useEffect } from "react";
+import { useContext } from "react";
+import UserContext from "./context/UserContext";
+import Notification from "./components/Notification";
 import BlogList from "./components/BlogList";
 import LoginForm from "./components/LoginForm";
-import ContextProvider from "./context/ContextProvider";
-import blogService from "./services/blogs";
 
 const App = () => {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const loggedInUser = window.localStorage.getItem("user");
-    if (loggedInUser) {
-      setUser(JSON.parse(loggedInUser));
-    }
-  }, []);
-
-  useEffect(() => {
-    window.localStorage.setItem("user", JSON.stringify(user));
-    blogService.setToken(user?.token);
-  }, [user]);
+  const [user, userDispatch] = useContext(UserContext);
 
   const handleLogout = () => {
     window.localStorage.clear();
-    setUser(null);
+    userDispatch({ type: "CLEAR" });
   };
 
   return (
-    <ContextProvider>
-      {user ? (
-        <BlogList user={user} handleLogout={handleLogout} />
-      ) : (
-        <LoginForm setUser={setUser} />
-      )}
-    </ContextProvider>
+    <>
+      <Notification />
+      {user ? <BlogList handleLogout={handleLogout} /> : <LoginForm />}
+    </>
   );
 };
 

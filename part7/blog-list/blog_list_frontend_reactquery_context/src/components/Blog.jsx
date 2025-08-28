@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import UserContext from "../context/UserContext";
 import blogService from "../services/blogs";
 import PropTypes from "prop-types";
 
-const Blog = ({ blog, ownedByUser }) => {
+const Blog = ({ blog }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -54,6 +55,8 @@ const Blog = ({ blog, ownedByUser }) => {
   const [isVisible, setIsVisible] = useState(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
 
+  const [user, _userDispatch] = useContext(UserContext);
+
   return (
     <div style={blogStyle} className="blog">
       {blog.title} {blog.author}
@@ -73,7 +76,9 @@ const Blog = ({ blog, ownedByUser }) => {
             </button>
           </div>
           <div>{blog.user.name}</div>
-          {ownedByUser && <button onClick={handleRemove}>Remove</button>}
+          {blog.user.username === user.username && (
+            <button onClick={handleRemove}>Remove</button>
+          )}
         </>
       )}
     </div>

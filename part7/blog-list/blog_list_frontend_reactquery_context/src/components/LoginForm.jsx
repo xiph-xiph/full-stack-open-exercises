@@ -1,20 +1,11 @@
-import { useState, useEffect } from "react";
-import Notification from "./Notification";
+import { useState, useContext } from "react";
+import NotificationContext from "../context/NotificationContext";
+import UserContext from "../context/UserContext";
 import loginService from "../services/login";
-import PropTypes from "prop-types";
 
-const LoginForm = ({ setUser }) => {
-  const [notifMessage, setNotifMessage] = useState("");
-  const [notifIsError, setNotifIsError] = useState(false);
-  useEffect(() => {
-    if (notifMessage) {
-      const timer = setTimeout(() => {
-        setNotifMessage("");
-        setNotifIsError(false);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [notifMessage]);
+const LoginForm = () => {
+  const [_notification, setNotification] = useContext(NotificationContext);
+  const [_user, userDispatch] = useContext(UserContext);
 
   const [username, setUsername] = useState("");
   const handleUsernameChange = (event) => {
@@ -30,18 +21,17 @@ const LoginForm = ({ setUser }) => {
     event.preventDefault();
     try {
       const user = await loginService.login(username, password);
-      setUser(user);
+      setNotification("Logged in succesfully", false);
+      userDispatch({ type: "SET", payload: user });
       setUsername("");
       setPassword("");
     } catch (error) {
-      setNotifMessage(error.response?.data?.error);
-      setNotifIsError(true);
+      setNotification(error.response?.data?.error, true);
     }
   };
 
   return (
     <>
-      <Notification message={notifMessage} isError={notifIsError} />
       <form onSubmit={handleSubmit}>
         <div>
           Username
@@ -61,10 +51,6 @@ const LoginForm = ({ setUser }) => {
       </form>
     </>
   );
-};
-
-LoginForm.propTypes = {
-  setUser: PropTypes.func.isRequired,
 };
 
 export default LoginForm;
