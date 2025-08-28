@@ -1,12 +1,10 @@
-import { useReducer } from "react";
+import { useReducer, useEffect } from "react";
 import UserContext from "./UserContext";
 import blogService from "../services/blogs";
 
 const reducer = (state, action) => {
   switch (action.type) {
     case "SET":
-      window.localStorage.setItem("user", JSON.stringify(action.payload));
-      blogService.setToken(action.payload?.token);
       return action.payload;
     case "CLEAR":
       return null;
@@ -22,6 +20,17 @@ const getStoredUser = (defaultUser) => {
 
 const UserProvider = ({ children }) => {
   const [user, userDispatch] = useReducer(reducer, null, getStoredUser);
+
+  useEffect(() => {
+    if (user) {
+      window.localStorage.setItem("user", JSON.stringify(user));
+      blogService.setToken(user.token);
+    } else {
+      window.localStorage.removeItem("user");
+      blogService.setToken(null);
+    }
+  }, [user]);
+
   return <UserContext value={[user, userDispatch]}>{children}</UserContext>;
 };
 
