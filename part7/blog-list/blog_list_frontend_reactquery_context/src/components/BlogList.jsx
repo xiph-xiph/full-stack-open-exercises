@@ -18,23 +18,6 @@ const BlogList = ({ user, handleLogout }) => {
   const blogFormRef = useRef();
   const closeForm = () => blogFormRef.current.toggleVisibility();
 
-  const likeBlog = async (blogToLike) => {
-    const updatedBlog = await blogService.update({
-      ...blogToLike,
-      likes: blogToLike.likes + 1,
-      user: blogToLike.user.id,
-    });
-    updatedBlog.user = blogToLike.user;
-    // setBlogs(
-    //   blogs.map((blog) => (blog.id === updatedBlog.id ? updatedBlog : blog)),
-    // );
-  };
-
-  const removeBlog = async (blogToRemove) => {
-    await blogService.remove(blogToRemove.id);
-    // setBlogs(blogs.filter((blog) => blog.id !== blogToRemove.id));
-  };
-
   if (blogQuery.isLoading) {
     return <div>loading data...</div>;
   }
@@ -55,8 +38,6 @@ const BlogList = ({ user, handleLogout }) => {
         <Blog
           key={blog.id}
           blog={blog}
-          likeBlog={likeBlog}
-          removeBlog={removeBlog}
           ownedByUser={blog.user.username === user.username}
         />
       ))}

@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import blogService from "../services/blogs";
 import PropTypes from "prop-types";
 
-const Blog = ({ blog, likeBlog, removeBlog, ownedByUser }) => {
+const Blog = ({ blog, ownedByUser }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -10,14 +12,46 @@ const Blog = ({ blog, likeBlog, removeBlog, ownedByUser }) => {
     marginBottom: 5,
   };
 
-  const handleLike = () => likeBlog(blog);
+  const queryClient = useQueryClient();
+
+  const likeBlogMutation = useMutation({
+    mutationFn: () =>
+      blogService.update({
+        ...blog,
+        likes: blog.likes + 1,
+        user: blog.user.id,
+      }),
+
+    onSuccess: (updatedBlog) => {
+      const blogs = queryClient.getQueryData(["blogs"]);
+      queryClient.setQueryData(
+        ["blogs"],
+        blogs.map((blog) =>
+          blog.id === updatedBlog.id
+            ? { ...blog, likes: blog.likes + 1 }
+            : blog,
+        ),
+      );
+    },
+  });
+
+  const removeBlogMutation = useMutation({
+    mutationFn: blogService.remove,
+    onSuccess: (_, deletedId) => {
+      const blogs = queryClient.getQueryData(["blogs"]);
+      queryClient.setQueryData(
+        ["blogs"],
+        blogs.filter((blog) => blog.id !== deletedId),
+      );
+    },
+  });
+
   const handleRemove = () =>
     window.confirm(
       `Are you sure you want to remove ${blog.title} by ${blog.author}?`,
-    ) && removeBlog(blog);
+    ) && removeBlogMutation.mutate(blog.id);
 
   const [isVisible, setIsVisible] = useState(false);
-
   const toggleVisibility = () => setIsVisible(!isVisible);
 
   return (
@@ -31,12 +65,15 @@ const Blog = ({ blog, likeBlog, removeBlog, ownedByUser }) => {
           <div>{blog.url}</div>
           <div>
             {"likes: " + blog.likes}{" "}
-            <button onClick={handleLike} className="likeButton">
+            <button
+              onClick={() => likeBlogMutation.mutate()}
+              className="likeButton"
+            >
               Like
             </button>
           </div>
           <div>{blog.user.name}</div>
-          {ownedByUser ? <button onClick={handleRemove}>Remove</button> : <></>}
+          {ownedByUser && <button onClick={handleRemove}>Remove</button>}
         </>
       )}
     </div>
@@ -45,8 +82,6 @@ const Blog = ({ blog, likeBlog, removeBlog, ownedByUser }) => {
 
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
-  likeBlog: PropTypes.func.isRequired,
-  removeBlog: PropTypes.func.isRequired,
 };
 
 export default Blog;

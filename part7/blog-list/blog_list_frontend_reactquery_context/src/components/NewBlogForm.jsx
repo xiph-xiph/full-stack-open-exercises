@@ -5,24 +5,13 @@ import blogService from "../services/blogs";
 import PropTypes from "prop-types";
 
 const NewBlogForm = ({ closeForm }) => {
+  const queryClient = useQueryClient();
+
   const [_notification, setNotification] = useContext(NotificationContext);
 
   const [title, setTitle] = useState("");
-  const handleTitleChange = (event) => {
-    setTitle(event.target.value);
-  };
-
   const [author, setAuthor] = useState("");
-  const handleAuthorChange = (event) => {
-    setAuthor(event.target.value);
-  };
-
   const [url, setUrl] = useState("");
-  const handleUrlChange = (event) => {
-    setUrl(event.target.value);
-  };
-
-  const queryClient = useQueryClient();
 
   const newBlogMutation = useMutation({
     mutationFn: blogService.addNew,
@@ -52,7 +41,7 @@ const NewBlogForm = ({ closeForm }) => {
           <input
             className="titleInput"
             value={title}
-            onChange={handleTitleChange}
+            onChange={(event) => setTitle(event.target.value)}
           />
         </div>
 
@@ -61,13 +50,17 @@ const NewBlogForm = ({ closeForm }) => {
           <input
             className="authorInput"
             value={author}
-            onChange={handleAuthorChange}
+            onChange={(event) => setAuthor(event.target.value)}
           />
         </div>
 
         <div>
           URL:
-          <input className="urlInput" value={url} onChange={handleUrlChange} />
+          <input
+            className="urlInput"
+            value={url}
+            onChange={(event) => setUrl(event.target.value)}
+          />
         </div>
 
         <button type="submit" className="submitButton">
