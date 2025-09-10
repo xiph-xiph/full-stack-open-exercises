@@ -6,7 +6,7 @@ import User from '../models/user.js'
 const usersRouter = Router()
 
 usersRouter.get('/', async (request, response) => {
-  const allUsers = await User.find({}).populate('blogs', { title: 1, url: 1, author: 1, id: 1 })
+  const allUsers = await User.find({}).populate('blogs', { title: 1, url: 1, author: 1 })
   response.json(allUsers)
 })
 

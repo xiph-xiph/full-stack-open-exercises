@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import Blog from '../models/blog.js'
+import User from '../models/user.js'
 import { userExtractor } from '../utils/middleware.js'
 import logger from '../utils/logger.js'
 
@@ -12,9 +13,11 @@ blogsRouter.get('/', async (request, response) => {
 })
 
 blogsRouter.post('/', userExtractor, async (request, response) => {
-  const newBlog = new Blog({ ...request.body, user: request.user.id })
+  const userId = request.user.id
+  const newBlog = new Blog({ ...request.body, user: userId })
   const savedBlog = await newBlog.save()
   const populatedBlog = await Blog.findById(savedBlog._id).populate('user', { username: 1, name: 1, id: 1 })
+  await User.findByIdAndUpdate(userId, { $addToSet: { blogs: savedBlog._id } })
   response.status(201).json(populatedBlog)
   logger.info(`Added ${savedBlog.title} to the database.`)
 })
@@ -36,6 +39,9 @@ blogsRouter.delete('/:id', userExtractor, async (request, response) => {
 
   const deletedBlog = await Blog.findByIdAndDelete(request.params.id)
   if (deletedBlog) {
+    await User.findByIdAndUpdate(blogToDelete.user, {
+      $pull: { blogs: blogToDelete._id }
+    })
     response.status(204).end()
   }
 })
