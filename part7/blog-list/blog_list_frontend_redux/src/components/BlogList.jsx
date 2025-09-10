@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setBlogs, addBlog } from "../reducers/blogsReducer";
-import { clearUser } from "../reducers/userReducer";
 import Toggleable from "./Toggleable";
 import Blog from "./Blog";
 import NewBlogForm from "./NewBlogForm";
@@ -10,7 +9,7 @@ import blogService from "../services/blogs";
 const BlogList = () => {
   const dispatch = useDispatch();
   const blogs = useSelector((state) => state.blogs);
-  const user = useSelector((state) => state.user);
+  const user = useSelector((state) => state.session);
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -23,18 +22,8 @@ const BlogList = () => {
   const blogFormRef = useRef();
   const closeForm = () => blogFormRef.current.toggleVisibility();
 
-  const handleLogout = () => {
-    window.localStorage.clear();
-    dispatch(clearUser());
-  };
-
   return (
     <>
-      <h2>Blogs</h2>
-      <p>
-        {user.name} is logged in
-        <button onClick={handleLogout}>Logout</button>
-      </p>
       <h2>Create new blog</h2>
       <Toggleable buttonLabel="Add new blog" ref={blogFormRef}>
         <NewBlogForm

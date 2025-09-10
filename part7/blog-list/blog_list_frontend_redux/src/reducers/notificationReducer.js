@@ -27,7 +27,6 @@ export const { setNotificationValue, setNotificationTimeout } =
 export const setNotification =
   (message, isError, duration = 3) =>
   (dispatch, getState) => {
-    console.log(message, isError, duration);
     clearTimeout(getState().notification.timeout);
     dispatch(setNotificationValue({ message, isError }));
     const timeout = setTimeout(

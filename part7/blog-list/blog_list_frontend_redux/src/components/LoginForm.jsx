@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { setNotification } from "../reducers/notificationReducer";
-import { setUser } from "../reducers/userReducer";
+import { useNavigate } from "react-router-dom";
+import { setUser } from "../reducers/sessionReducer";
 import loginService from "../services/login";
 
 const LoginForm = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [username, setUsername] = useState("");
   const handleUsernameChange = (event) => {
@@ -25,6 +27,7 @@ const LoginForm = () => {
       dispatch(setUser(user));
       setUsername("");
       setPassword("");
+      navigate("/");
     } catch (error) {
       dispatch(setNotification(error.response?.data?.error, true));
     }
