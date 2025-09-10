@@ -63,6 +63,10 @@ const BlogDetails = () => {
       {user.username === blog.user.username ? (
         <button onClick={handleDelete}>Remove</button>
       ) : null}
+      <h3>Comments</h3>
+      <ul>
+        {blog.comments.map((comment) => <li key={comment} >{comment}</li> )}
+      </ul>
     </>
   );
 };

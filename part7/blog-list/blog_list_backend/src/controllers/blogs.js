@@ -74,4 +74,13 @@ blogsRouter.patch('/:id', userExtractor, async (request, response) => {
   response.json(updatedBlog)
 })
 
+blogsRouter.post('/:id/comments', async (request, response) => {
+  if (!request.body?.comment) return response.status(400).json({ message: 'Error: comment not found' })
+
+  await Blog.findByIdAndUpdate(request.params.id, { $addToSet: { comments: request.body.comment } })
+
+  response.status(201).json(`comment '${request.body.comment}' was added succesfully`)
+  logger.info(`Added new comment '${request.body.comment}' to blog with id ${request.params.id}`)
+})
+
 export default blogsRouter
