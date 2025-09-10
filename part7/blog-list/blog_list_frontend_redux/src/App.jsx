@@ -1,22 +1,33 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Routes, Route, useNavigate } from "react-router-dom";
+import { setBlogs } from "./reducers/blogsReducer";
 import { setUser } from "./reducers/sessionReducer";
 import { setUsers } from "./reducers/usersReducer";
 import Notification from "./components/Notification";
-import BlogList from "./components/BlogList";
-import LoginForm from "./components/LoginForm";
-import UsersList from "./components/UsersList";
+import BlogList from "./pages/BlogList";
+import LoginForm from "./pages/LoginForm";
+import UsersList from "./pages/UserList";
+import BlogDetails from "./pages/BlogDetails";
 import blogService from "./services/blogs";
 import LoggedInHeader from "./components/LoggedInHeader";
-import UserDetails from "./components/UserDetails";
+import UserDetails from "./pages/UserDetails";
 import usersService from "./services/users";
+import HomeRedirect from "./pages/HomeRedirect";
 
 const App = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.session);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      const blogs = await blogService.getAll();
+      dispatch(setBlogs(blogs));
+    };
+    fetchBlogs();
+  }, [dispatch]);
 
   useEffect(() => {
     const loggedInUser = window.localStorage.getItem("user");
@@ -43,8 +54,10 @@ const App = () => {
       <Notification />
       {user ? <LoggedInHeader /> : null}
       <Routes>
+        <Route path="" element={<HomeRedirect />} />
         <Route path="login" element={<LoginForm />} />
-        <Route path="/" element={<BlogList />} />
+        <Route path="blogs" element={<BlogList />} />
+        <Route path="blogs/:id" element={<BlogDetails />} />
         <Route path="users" element={<UsersList />} />
         <Route path="users/:id" element={<UserDetails />} />
       </Routes>

@@ -6,7 +6,7 @@ const UserDetails = () => {
   const users = useSelector((state) => state.users);
 
   if (!users) {
-    return <p>Loading users... {users}</p>;
+    return <p>Loading users...</p>;
   }
 
   const user = users.find((user) => user.id === id);
