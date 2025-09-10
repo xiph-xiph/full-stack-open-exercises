@@ -10,7 +10,7 @@ import LoginForm from "./pages/LoginForm";
 import UsersList from "./pages/UserList";
 import BlogDetails from "./pages/BlogDetails";
 import blogService from "./services/blogs";
-import LoggedInHeader from "./components/LoggedInHeader";
+import NavigationMenu from "./components/NavigationMenu";
 import UserDetails from "./pages/UserDetails";
 import usersService from "./services/users";
 import HomeRedirect from "./pages/HomeRedirect";
@@ -51,15 +51,16 @@ const App = () => {
 
   return (
     <div>
+      {user ? <NavigationMenu /> : null}
       <Notification />
-      {user ? <LoggedInHeader /> : null}
+      <h2>Blog App</h2>
       <Routes>
-        <Route path="" element={<HomeRedirect />} />
-        <Route path="login" element={<LoginForm />} />
-        <Route path="blogs" element={<BlogList />} />
-        <Route path="blogs/:id" element={<BlogDetails />} />
-        <Route path="users" element={<UsersList />} />
-        <Route path="users/:id" element={<UserDetails />} />
+        <Route path="/" element={<HomeRedirect />} />
+        <Route path="/login" element={<LoginForm />} />
+        <Route path="/blogs" element={<BlogList />} />
+        <Route path="/blogs/:id" element={<BlogDetails />} />
+        <Route path="/users" element={<UsersList />} />
+        <Route path="/users/:id" element={<UserDetails />} />
       </Routes>
     </div>
   );

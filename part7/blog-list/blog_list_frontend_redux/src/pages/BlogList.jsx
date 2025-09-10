@@ -30,10 +30,8 @@ const BlogList = () => {
         />
       </Toggleable>
       {blogs.map((blog) => (
-        <div style={blogStyle}>
-          <Link to={blog.id} key={blog.id}>
-            {blog.title}
-          </Link>
+        <div style={blogStyle} key={blog.id}>
+          <Link to={blog.id}>{blog.title}</Link>
         </div>
       ))}
     </>
