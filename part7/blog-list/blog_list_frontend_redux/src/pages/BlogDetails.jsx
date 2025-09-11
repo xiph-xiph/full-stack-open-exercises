@@ -54,12 +54,6 @@ const BlogDetails = () => {
       likes: blog.likes + 1,
       user: blog.user.id,
     });
-    console.log({
-      ...blog,
-      likes: blog.likes + 1,
-      user: blog.user.id,
-    });
-    console.log(updatedBlog);
     updatedBlog.user = blog.user;
     dispatch(likeBlog(blog.id));
   };
