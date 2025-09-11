@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { setUser } from "../reducers/sessionReducer";
 import loginService from "../services/login";
 
+import { Typography, TextField, Button, Stack } from "@mui/material";
+
 const LoginForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -35,23 +37,33 @@ const LoginForm = () => {
 
   return (
     <>
-      <h3>Login</h3>
+      <Typography variant="h4">Login</Typography>
       <form onSubmit={handleSubmit}>
-        <div>
-          Username
-          <input value={username} onChange={handleUsernameChange} />
-        </div>
-
-        <div>
-          Password
-          <input
+        <Stack
+          spacing={1}
+          sx={{
+            alignItems: "baseline",
+          }}
+        >
+          <TextField
+            value={username}
+            onChange={handleUsernameChange}
+            label="Username"
+            variant="outlined"
+            size="small"
+          />
+          <TextField
             value={password}
             onChange={handlePasswordChange}
+            label="Password"
             type="password"
+            variant="outlined"
+            size="small"
           />
-        </div>
-
-        <button type="submit">Login</button>
+          <Button variant="contained" type="submit">
+            Login
+          </Button>
+        </Stack>
       </form>
     </>
   );

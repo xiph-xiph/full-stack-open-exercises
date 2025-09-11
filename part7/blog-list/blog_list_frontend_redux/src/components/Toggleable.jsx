@@ -1,4 +1,5 @@
 import { useState, useImperativeHandle } from "react";
+import { Button } from "@mui/material";
 import PropTypes from "prop-types";
 
 const Toggleable = ({ children, buttonLabel, ref }) => {
@@ -15,7 +16,9 @@ const Toggleable = ({ children, buttonLabel, ref }) => {
       {visible ? (
         children
       ) : (
-        <button onClick={toggleVisibility}>{buttonLabel}</button>
+        <Button variant="outlined" onClick={toggleVisibility}>
+          {buttonLabel}
+        </Button>
       )}
     </>
   );

@@ -15,6 +15,8 @@ import UserDetails from "./pages/UserDetails";
 import usersService from "./services/users";
 import HomeRedirect from "./pages/HomeRedirect";
 
+import { Container, Typography, Divider, Stack } from "@mui/material";
+
 const App = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.session);
@@ -50,19 +52,27 @@ const App = () => {
   }, [dispatch]);
 
   return (
-    <div>
-      {user ? <NavigationMenu /> : null}
-      <Notification />
-      <h2>Blog App</h2>
-      <Routes>
-        <Route path="/" element={<HomeRedirect />} />
-        <Route path="/login" element={<LoginForm />} />
-        <Route path="/blogs" element={<BlogList />} />
-        <Route path="/blogs/:id" element={<BlogDetails />} />
-        <Route path="/users" element={<UsersList />} />
-        <Route path="/users/:id" element={<UserDetails />} />
-      </Routes>
-    </div>
+    <Container>
+      <Stack
+        spacing={1}
+        sx={{
+          alignItems: "baseline",
+        }}
+      >
+        {user ? <NavigationMenu /> : null}
+        <Notification />
+        <Typography variant="h3">Blog App</Typography>
+        <Divider />
+        <Routes>
+          <Route path="/" element={<HomeRedirect />} />
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/blogs" element={<BlogList />} />
+          <Route path="/blogs/:id" element={<BlogDetails />} />
+          <Route path="/users" element={<UsersList />} />
+          <Route path="/users/:id" element={<UserDetails />} />
+        </Routes>
+      </Stack>
+    </Container>
   );
 };
 

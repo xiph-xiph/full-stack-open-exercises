@@ -1,6 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
 import { clearUser } from "../reducers/sessionReducer";
 import { useNavigate, Link } from "react-router-dom";
+import { Breadcrumbs, Stack, Button } from "@mui/material";
+
 const NavigationMenu = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -23,22 +25,25 @@ const NavigationMenu = () => {
   };
 
   return (
-    <div style={menuStyle}>
-      <Link to="/blogs">Blogs</Link>
-      <Link to="/users">Users</Link>
-
+    <Stack spacing={2} direction="row" style={menuStyle}>
+      <Breadcrumbs spacing={2} direction="row" separator="|">
+        <Link to="/blogs">Blogs</Link>
+        <Link to="/users">Users</Link>
+      </Breadcrumbs>
       {user ? (
-        <div>
-          {user.name} is logged in
-          <button onClick={handleLogout}>Logout</button>
-        </div>
+        <>
+          <div>{user.name} is logged in</div>
+          <Button variant="text" onClick={handleLogout}>
+            Logout
+          </Button>
+        </>
       ) : (
         <div>
           no user is logged in
           <Link to="/login">Login</Link>
         </div>
       )}
-    </div>
+    </Stack>
   );
 };
 

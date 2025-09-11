@@ -2,6 +2,15 @@ import { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addBlog } from "../reducers/blogsReducer";
 import { Link } from "react-router-dom";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Paper,
+  Stack,
+} from "@mui/material";
 import Toggleable from "../components/Toggleable";
 import NewBlogForm from "../components/NewBlogForm";
 
@@ -9,19 +18,16 @@ const BlogList = () => {
   const dispatch = useDispatch();
   const blogs = useSelector((state) => state.blogs);
 
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: "solid",
-    borderWidth: 1,
-    marginBottom: 5,
-  };
-
   const blogFormRef = useRef();
   const closeForm = () => blogFormRef.current.toggleVisibility();
 
   return (
-    <>
+    <Stack
+      spacing={1}
+      sx={{
+        alignItems: "baseline",
+      }}
+    >
       <Toggleable buttonLabel="Add new blog" ref={blogFormRef}>
         <h2>Create new blog</h2>
         <NewBlogForm
@@ -29,12 +35,21 @@ const BlogList = () => {
           closeForm={closeForm}
         />
       </Toggleable>
-      {blogs.map((blog) => (
-        <div style={blogStyle} key={blog.id}>
-          <Link to={blog.id}>{blog.title}</Link>
-        </div>
-      ))}
-    </>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableBody>
+            {blogs.map((blog) => (
+              <TableRow key={blog.id}>
+                <TableCell>
+                  <Link to={blog.id}>{blog.title}</Link>
+                </TableCell>
+                <TableCell align="right">{blog.author}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Stack>
   );
 };
 
