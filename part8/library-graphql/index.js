@@ -1,5 +1,6 @@
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
+import { v1 } from "uuid";
 
 let authors = [
   {
@@ -101,6 +102,15 @@ const typeDefs = `
     allBooks(author: String, genre: String): [Book!]!
     allAuthors: [Author!]!
   }
+
+  type Mutation {
+    addBook(
+      title: String!
+      author: String!
+      published: Int!
+      genres: [String!]!
+    ): Book
+  }
 `;
 
 const resolvers = {
@@ -129,6 +139,16 @@ const resolvers = {
           ),
         };
       }),
+  },
+  Mutation: {
+    addBook: (root, args) => {
+      const newBook = { ...args, id: v1() };
+      books.push(newBook);
+      if (!authors.find((author) => args.author === author.name)) {
+        authors.push({ name: args.author, id: v1() });
+      }
+      return newBook;
+    },
   },
 };
 
