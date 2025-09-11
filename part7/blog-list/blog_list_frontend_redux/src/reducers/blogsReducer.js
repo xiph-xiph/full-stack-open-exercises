@@ -18,9 +18,16 @@ const blogSlice = createSlice({
       const blogToLike = state.find((blog) => blog.id === action.payload);
       blogToLike.likes += 1;
     },
+    addComment(state, action) {
+      const blogToCommentOn = state.find(
+        (blog) => blog.id === action.payload.id,
+      );
+      blogToCommentOn.comments.push(action.payload.comment);
+    },
   },
 });
 
-export const { setBlogs, addBlog, deleteBlog, likeBlog } = blogSlice.actions;
+export const { setBlogs, addBlog, deleteBlog, likeBlog, addComment } =
+  blogSlice.actions;
 
 export default blogSlice.reducer;
