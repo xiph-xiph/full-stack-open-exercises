@@ -53,12 +53,7 @@ const App = () => {
 
   return (
     <Container>
-      <Stack
-        spacing={1}
-        sx={{
-          alignItems: "baseline",
-        }}
-      >
+      <Stack spacing={1}>
         {user ? <NavigationMenu /> : null}
         <Notification />
         <Typography variant="h3">Blog App</Typography>
