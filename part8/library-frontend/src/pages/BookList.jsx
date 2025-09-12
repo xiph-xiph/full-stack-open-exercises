@@ -8,9 +8,35 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
+import { gql } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 
 const BookList = () => {
-  const books = [];
+  const booksQuery = gql`
+    query {
+      allBooks {
+        title
+        author
+        published
+        genres
+        id
+      }
+    }
+  `;
+
+  const { loading, error, data } = useQuery(booksQuery);
+
+  if (loading)
+    return (
+      <>
+        <Typography variant="h3">Books</Typography>
+        <Typography variant="body1">Loading books...</Typography>
+      </>
+    );
+
+  if (error) return <Typography variant="body1">ERROR: {error}</Typography>;
+
+  const books = data.allBooks;
 
   return (
     <div>
