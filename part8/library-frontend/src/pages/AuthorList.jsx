@@ -1,5 +1,6 @@
 import { useQuery } from "@apollo/client/react";
 import { authorsQuery } from "../queries";
+import BirthyearForm from "../components/BirthyearForm";
 import {
   Typography,
   Table,
@@ -50,6 +51,7 @@ const AuthorList = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      <BirthyearForm />
     </>
   );
 };

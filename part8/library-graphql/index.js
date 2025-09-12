@@ -154,7 +154,14 @@ const resolvers = {
       const foundAuthor = authors.find((author) => author.name === args.name);
       if (!foundAuthor) return null;
       foundAuthor.born = args.setBornTo;
-      return foundAuthor;
+      return {
+        ...foundAuthor,
+        bookCount: books.reduce(
+          (total, book) =>
+            book.author === foundAuthor.name ? total + 1 : total,
+          0
+        ),
+      };
     },
   },
 };
