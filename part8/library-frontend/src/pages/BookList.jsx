@@ -1,3 +1,5 @@
+import { useQuery } from "@apollo/client/react";
+import { booksQuery } from "../queries";
 import {
   Typography,
   Table,
@@ -8,22 +10,8 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
-import { gql } from "@apollo/client";
-import { useQuery } from "@apollo/client/react";
 
 const BookList = () => {
-  const booksQuery = gql`
-    query {
-      allBooks {
-        title
-        author
-        published
-        genres
-        id
-      }
-    }
-  `;
-
   const { loading, error, data } = useQuery(booksQuery);
 
   if (loading)

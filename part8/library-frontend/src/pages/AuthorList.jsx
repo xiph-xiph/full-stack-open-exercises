@@ -1,5 +1,5 @@
-import { gql } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
+import { authorsQuery } from "../queries";
 import {
   Typography,
   Table,
@@ -12,17 +12,6 @@ import {
 } from "@mui/material";
 
 const AuthorList = () => {
-  const authorsQuery = gql`
-    query {
-      allAuthors {
-        name
-        born
-        bookCount
-        id
-      }
-    }
-  `;
-
   const { loading, error, data } = useQuery(authorsQuery);
 
   if (loading)

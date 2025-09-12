@@ -10,6 +10,9 @@ const LibraryHeader = () => {
       <Link component={RouterLink} to="/books">
         Books
       </Link>
+      <Link component={RouterLink} to="/newbook">
+        Add New Book
+      </Link>
     </Breadcrumbs>
   );
 };
