@@ -51,7 +51,7 @@ const AuthorList = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <BirthyearForm />
+      <BirthyearForm authors={authors} />
     </>
   );
 };
