@@ -1,5 +1,6 @@
 import { ApolloServer } from "@apollo/server";
 import { gql } from "graphql-tag";
+import { GraphQLError } from "graphql";
 import { startStandaloneServer } from "@apollo/server/standalone";
 import mongoose from "mongoose";
 import Book from "./models/Book.js";
@@ -77,30 +78,48 @@ const resolvers = {
   },
   Mutation: {
     addBook: async (root, args) => {
-      let author = await Author.findOne({ name: args.author });
-      if (!author) {
-        const newAuthor = new Author({ name: args.author });
-        author = await newAuthor.save();
+      try {
+        let author = await Author.findOne({ name: args.author });
+        if (!author) {
+          const newAuthor = new Author({ name: args.author });
+          author = await newAuthor.save();
+        }
+        const newBook = new Book({ ...args, author: author._id });
+        const savedBook = await newBook.save();
+        await savedBook.populate("author");
+        return savedBook;
+      } catch (error) {
+        throw new GraphQLError("Could not add book", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            error,
+          },
+        });
       }
-      const newBook = new Book({ ...args, author: author._id });
-      const savedBook = await newBook.save();
-
-      return savedBook;
     },
     editAuthor: async (root, args) => {
-      const newAuthor = await Author.findOneAndUpdate(
-        { name: args.name },
-        { born: args.setBornTo },
-        { new: true }
-      );
-      const bookList = await Book.find({});
+      try {
+        const newAuthor = await Author.findOneAndUpdate(
+          { name: args.name },
+          { born: args.setBornTo },
+          { new: true }
+        );
+        const bookList = await Book.find({});
 
-      newAuthor.bookCount = bookList.reduce(
-        (acc, book) =>
-          book.author.toString() === newAuthor._id.toString() ? acc + 1 : acc,
-        0
-      );
-      return newAuthor;
+        newAuthor.bookCount = bookList.reduce(
+          (acc, book) =>
+            book.author.toString() === newAuthor._id.toString() ? acc + 1 : acc,
+          0
+        );
+        return newAuthor;
+      } catch (error) {
+        throw new GraphQLError("Could not edit author", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            error,
+          },
+        });
+      }
     },
   },
 };
