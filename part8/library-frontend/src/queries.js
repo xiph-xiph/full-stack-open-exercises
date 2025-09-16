@@ -25,7 +25,9 @@ export const newBookMutation = gql`
       genres: $genres
     ) {
       title
-      author
+      author {
+        name
+      }
       published
       genres
       id
