@@ -12,7 +12,7 @@ import {
   Paper,
 } from "@mui/material";
 
-const AuthorList = () => {
+const AuthorList = ({ token }) => {
   const { loading, error, data } = useQuery(authorsQuery);
 
   if (loading)
@@ -51,7 +51,7 @@ const AuthorList = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <BirthyearForm authors={authors} />
+      {token ? <BirthyearForm authors={authors} /> : null}
     </>
   );
 };
