@@ -25,8 +25,11 @@ const authorResolvers = {
     },
   },
   Mutation: {
-    editAuthor: async (root, { name, setBornTo }) => {
+    editAuthor: async (root, { name, setBornTo }, context) => {
       try {
+        if (!context.currentUser) {
+          throw new Error("User is not logged in");
+        }
         const newAuthor = await Author.findOneAndUpdate(
           { name },
           { born: setBornTo },
@@ -41,7 +44,7 @@ const authorResolvers = {
         );
         return newAuthor;
       } catch (error) {
-        throw new GraphQLError("Could not edit author", {
+        throw new GraphQLError(`Could not edit author: ${error.message}`, {
           extensions: {
             code: "BAD_USER_INPUT",
             error,

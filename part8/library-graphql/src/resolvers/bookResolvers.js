@@ -19,8 +19,11 @@ const bookResolvers = {
     },
   },
   Mutation: {
-    addBook: async (root, args) => {
+    addBook: async (root, args, context) => {
       try {
+        if (!context.currentUser) {
+          throw new Error("User is not logged in");
+        }
         let author = await Author.findOne({ name: args.author });
         if (!author) {
           const newAuthor = new Author({ name: args.author });
@@ -31,7 +34,7 @@ const bookResolvers = {
         await savedBook.populate("author");
         return savedBook;
       } catch (error) {
-        throw new GraphQLError("Could not add book", {
+        throw new GraphQLError(`Could not add book: ${error.message}`, {
           extensions: {
             code: "BAD_USER_INPUT",
             error,
