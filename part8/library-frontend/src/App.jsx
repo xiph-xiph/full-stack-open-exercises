@@ -2,6 +2,7 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import Home from "./pages/Home";
 import AuthorList from "./pages/AuthorList";
 import BookList from "./pages/BookList";
+import Recommended from "./pages/Recommended";
 import NavigationHeader from "./components/NavigationHeader";
 import NewBook from "./pages/NewBook";
 import Login from "./pages/Login";
@@ -35,6 +36,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/books" element={<BookList />} />
+          <Route path="/recommended" element={<Recommended />} />
           <Route path="/authors" element={<AuthorList token={token} />} />
           <Route path="/newbook" element={<NewBook />} />
           <Route path="/login" element={<Login setToken={setToken} />} />

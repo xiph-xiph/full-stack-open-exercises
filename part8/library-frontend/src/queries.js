@@ -67,3 +67,13 @@ export const authorsQuery = gql`
     }
   }
 `;
+
+export const meQuery = gql`
+  query {
+    me {
+      username
+      id
+      favoriteGenre
+    }
+  }
+`;

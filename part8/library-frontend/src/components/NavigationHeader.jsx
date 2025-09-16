@@ -14,6 +14,9 @@ const NavigationHeader = ({ token, handleLogout }) => {
 
         {token ? (
           [
+            <Link component={RouterLink} to="/recommended">
+              Recommended
+            </Link>,
             <Link component={RouterLink} to="/newbook">
               Add New Book
             </Link>,

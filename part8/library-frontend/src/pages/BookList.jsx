@@ -18,7 +18,7 @@ import { useState } from "react";
 const BookList = () => {
   const { loading, error, data } = useQuery(booksQuery);
 
-  const [filter, setFilter] = useState();
+  const [filter, setFilter] = useState(null);
 
   if (loading)
     return (
