@@ -6,6 +6,8 @@ import Book from "../models/Book.js";
 const authorResolvers = {
   Query: {
     authorCount: async () => (await Author.find({})).length,
+    // Fetch all authors and all books in two queries, then count books per author in-memory.
+    // Avoids N+1 by not querying the DB for each author's bookCount.
     allAuthors: async () => {
       const bookList = await Book.find({});
       let authorList = await Author.find({});
