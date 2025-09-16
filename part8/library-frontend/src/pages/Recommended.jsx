@@ -1,5 +1,5 @@
 import { useQuery } from "@apollo/client/react";
-import { recommendedBooksQuery, meQuery } from "../queries";
+import { booksByGenreQuery, meQuery } from "../queries";
 import {
   Typography,
   Table,
@@ -25,7 +25,7 @@ const Recommended = () => {
     loading: booksLoading,
     error: booksError,
     data: booksData,
-  } = useQuery(recommendedBooksQuery, { variables: { genre }, skip: !genre });
+  } = useQuery(booksByGenreQuery, { variables: { genre }, skip: !genre });
 
   if (booksLoading || userLoading)
     return (

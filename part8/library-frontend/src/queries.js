@@ -57,8 +57,8 @@ export const booksQuery = gql`
   }
 `;
 
-export const recommendedBooksQuery = gql`
-  query recommendedBooks($genre: String) {
+export const booksByGenreQuery = gql`
+  query booksByGenre($genre: String) {
     allBooks(genre: $genre) {
       title
       author {
