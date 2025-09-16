@@ -29,7 +29,7 @@ const authorResolvers = {
       try {
         const newAuthor = await Author.findOneAndUpdate(
           { name },
-          { born: args.setBornTo },
+          { born: setBornTo },
           { new: true }
         );
         const bookList = await Book.find({});
