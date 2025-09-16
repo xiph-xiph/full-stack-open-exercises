@@ -93,3 +93,12 @@ export const meQuery = gql`
     }
   }
 `;
+
+export const bookAddedSubscription = gql`
+  subscription {
+    bookAdded {
+      ...BookDetails
+    }
+  }
+  ${bookDetails}
+`;

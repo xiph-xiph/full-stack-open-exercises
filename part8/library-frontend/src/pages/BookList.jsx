@@ -1,5 +1,9 @@
-import { useQuery } from "@apollo/client/react";
-import { allBooksQuery, booksByGenreQuery } from "../queries";
+import { useQuery, useSubscription } from "@apollo/client/react";
+import {
+  allBooksQuery,
+  booksByGenreQuery,
+  bookAddedSubscription,
+} from "../queries";
 import {
   Typography,
   Table,
@@ -21,6 +25,18 @@ const BookList = () => {
     loading: allBooksLoading,
     error: allBooksError,
   } = useQuery(allBooksQuery);
+
+  useSubscription(bookAddedSubscription, {
+    onData: ({ data, client }) => {
+      const addedBook = data.data.bookAdded;
+      console.log(`${addedBook.title} was added`);
+      client.cache.updateQuery({ query: allBooksQuery }, ({ allBooks }) => {
+        return {
+          allBooks: allBooks.concat(addedBook),
+        };
+      });
+    },
+  });
 
   const [filter, setFilter] = useState(null);
 
