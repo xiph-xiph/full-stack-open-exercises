@@ -11,12 +11,9 @@ import {
 } from "@mui/material";
 
 const NewBook = () => {
-  const [addNewBook, { _data, _loading, _error }] = useMutation(
-    newBookMutation,
-    {
-      refetchQueries: [{ query: booksQuery }, { query: authorsQuery }],
-    }
-  );
+  const [addNewBook] = useMutation(newBookMutation, {
+    refetchQueries: [{ query: booksQuery }, { query: authorsQuery }],
+  });
 
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
