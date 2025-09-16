@@ -1,7 +1,9 @@
 import { GraphQLError } from "graphql";
-
+import { PubSub } from "graphql-subscriptions";
 import Book from "../models/Book.js";
 import Author from "../models/Author.js";
+
+const pubsub = new PubSub();
 
 const bookResolvers = {
   Query: {
@@ -32,6 +34,9 @@ const bookResolvers = {
         const newBook = new Book({ ...args, author: author._id });
         const savedBook = await newBook.save();
         await savedBook.populate("author");
+
+        pubsub.publish("BOOK_ADDED", { bookAdded: savedBook });
+
         return savedBook;
       } catch (error) {
         throw new GraphQLError(`Could not add book: ${error.message}`, {
@@ -41,6 +46,11 @@ const bookResolvers = {
           },
         });
       }
+    },
+  },
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterableIterator("BOOK_ADDED"),
     },
   },
 };
