@@ -1,5 +1,5 @@
 import { useQuery } from "@apollo/client/react";
-import { booksQuery, meQuery } from "../queries";
+import { recommendedBooksQuery, meQuery } from "../queries";
 import {
   Typography,
   Table,
@@ -14,15 +14,18 @@ import {
 
 const Recommended = () => {
   const {
-    loading: booksLoading,
-    error: booksError,
-    data: booksData,
-  } = useQuery(booksQuery);
-  const {
     loading: userLoading,
     error: userError,
     data: userData,
   } = useQuery(meQuery);
+
+  const genre = userData?.me.favoriteGenre;
+
+  const {
+    loading: booksLoading,
+    error: booksError,
+    data: booksData,
+  } = useQuery(recommendedBooksQuery, { variables: { genre }, skip: !genre });
 
   if (booksLoading || userLoading)
     return (
@@ -33,21 +36,14 @@ const Recommended = () => {
     );
 
   if (booksError || userError)
-    return (
-      <Typography variant="body1">
-        ERROR: {booksError} {userError}
-      </Typography>
-    );
+    return <Typography variant="body1">ERROR: {booksError}</Typography>;
 
   const books = booksData.allBooks;
-  const filter = userData.me.favoriteGenre;
-
-  const filteredBooks = books.filter((book) => book.genres.includes(filter));
 
   return (
     <Stack spacing={1}>
       <Typography variant="h3">Recommended Books For You</Typography>
-      <Typography variant="body1">Your favorite genre is: {filter}</Typography>
+      <Typography variant="body1">Your favorite genre is: {genre}</Typography>
 
       <TableContainer component={Paper}>
         <Table>
@@ -59,7 +55,7 @@ const Recommended = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredBooks.map((a) => (
+            {books.map((a) => (
               <TableRow key={a.title}>
                 <TableCell>{a.title}</TableCell>
                 <TableCell>{a.author.name}</TableCell>
