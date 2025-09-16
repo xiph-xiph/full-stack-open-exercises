@@ -3,7 +3,7 @@ import { startStandaloneServer } from "@apollo/server/standalone";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import User from "./models/User.js";
-import typeDefs from "./typeDefs.js";
+import typeDefs from "./schema.js";
 import bookResolvers from "./resolvers/bookResolvers.js";
 import authorResolvers from "./resolvers/authorResolvers.js";
 import userResolvers from "./resolvers/userResolvers.js";
