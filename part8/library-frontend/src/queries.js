@@ -43,7 +43,7 @@ export const loginMutation = gql`
   }
 `;
 
-export const booksQuery = gql`
+export const allBooksQuery = gql`
   query {
     allBooks {
       title

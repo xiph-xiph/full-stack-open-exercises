@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation } from "@apollo/client/react";
-import { newBookMutation, booksQuery, authorsQuery } from "../queries";
+import { newBookMutation, allBooksQuery, authorsQuery } from "../queries";
 import {
   TextField,
   Stack,
@@ -12,7 +12,7 @@ import {
 
 const NewBook = () => {
   const [addNewBook] = useMutation(newBookMutation, {
-    refetchQueries: [{ query: booksQuery }, { query: authorsQuery }],
+    refetchQueries: [{ query: allBooksQuery }, { query: authorsQuery }],
   });
 
   const [title, setTitle] = useState("");

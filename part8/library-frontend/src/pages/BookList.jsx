@@ -1,5 +1,5 @@
 import { useQuery } from "@apollo/client/react";
-import { booksQuery } from "../queries";
+import { allBooksQuery, booksByGenreQuery } from "../queries";
 import {
   Typography,
   Table,
@@ -16,11 +16,24 @@ import {
 import { useState } from "react";
 
 const BookList = () => {
-  const { loading, error, data } = useQuery(booksQuery);
+  const {
+    data: allBooksData,
+    loading: allBooksLoading,
+    error: allBooksError,
+  } = useQuery(allBooksQuery);
 
   const [filter, setFilter] = useState(null);
 
-  if (loading)
+  const {
+    data: booksByGenreData,
+    loading: booksByGenreLoading,
+    error: booksByGenreError,
+  } = useQuery(booksByGenreQuery, {
+    variables: { genre: filter },
+    skip: !filter,
+  });
+
+  if (allBooksLoading || booksByGenreLoading)
     return (
       <>
         <Typography variant="h3">Books</Typography>
@@ -28,22 +41,25 @@ const BookList = () => {
       </>
     );
 
-  if (error) return <Typography variant="body1">ERROR: {error}</Typography>;
+  if (allBooksError || booksByGenreError)
+    return (
+      <Typography variant="body1">
+        ERROR: {allBooksError} {booksByGenreError}
+      </Typography>
+    );
 
-  const books = data.allBooks;
-
-  const genresMap = books.reduce((allGenres, book) => {
+  const genresMap = allBooksData.allBooks.reduce((allGenres, book) => {
     book.genres.forEach((genre) => allGenres.add(genre));
     return allGenres;
   }, new Set());
 
   const genres = Array.from(genresMap);
 
-  const handleFilter = (event, newFilter) => setFilter(newFilter);
+  const books = booksByGenreData
+    ? booksByGenreData.allBooks
+    : allBooksData.allBooks;
 
-  const filteredBooks = books.filter(
-    (book) => book.genres.includes(filter) || filter === null
-  );
+  const handleFilter = (_event, newFilter) => setFilter(newFilter);
 
   return (
     <Stack spacing={1}>
@@ -65,7 +81,7 @@ const BookList = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredBooks.map((a) => (
+            {books.map((a) => (
               <TableRow key={a.title}>
                 <TableCell>{a.title}</TableCell>
                 <TableCell>{a.author.name}</TableCell>
