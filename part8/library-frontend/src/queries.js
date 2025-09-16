@@ -35,6 +35,14 @@ export const newBookMutation = gql`
   }
 `;
 
+export const loginMutation = gql`
+  mutation login($username: String!, $password: String!) {
+    login(username: $username, password: $password) {
+      value
+    }
+  }
+`;
+
 export const booksQuery = gql`
   query {
     allBooks {

@@ -1,100 +1,51 @@
 import { useState } from "react";
 import { useMutation } from "@apollo/client/react";
-import {
-  newBookMutation,
-  loginMutation,
-  booksQuery,
-  authorsQuery,
-} from "../queries";
-import {
-  TextField,
-  Stack,
-  Button,
-  Typography,
-  Chip,
-  Grid,
-} from "@mui/material";
+import { loginMutation } from "../queries";
+import { TextField, Stack, Button, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
-const NewBook = () => {
-  const [addNewBook] = useMutation(newBookMutation, {
-    refetchQueries: [{ query: booksQuery }, { query: authorsQuery }],
-  });
+const Login = ({ setToken }) => {
+  const [login] = useMutation(loginMutation);
 
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [published, setPublished] = useState("");
-  const [genre, setGenre] = useState("");
-  const [genres, setGenres] = useState([]);
+  const navigate = useNavigate();
 
-  const submit = async (event) => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    addNewBook({
-      variables: { title, author, published: Number(published), genres },
-    });
-    setTitle("");
-    setPublished("");
-    setAuthor("");
-    setGenres([]);
-    setGenre("");
-  };
-
-  const addGenre = () => {
-    setGenres(genres.concat(genre));
-    setGenre("");
+    const { data } = await login({ variables: { username, password } });
+    setToken(data.login.value);
+    setUsername("");
+    setPassword("");
+    navigate("/");
   };
 
   return (
     <div>
-      <form onSubmit={submit}>
+      <form onSubmit={handleSubmit}>
         <Stack spacing={1} alignItems="baseline">
-          <Typography variant="h3">Add New Book</Typography>
+          <Typography variant="h3">Login</Typography>
           <TextField
-            label="Title"
+            label="Username"
             size="small"
-            value={title}
-            onChange={({ target }) => setTitle(target.value)}
+            value={username}
+            onChange={({ target }) => setUsername(target.value)}
           />
           <TextField
-            label="Author"
+            label="Password"
+            type="password"
             size="small"
-            value={author}
-            onChange={({ target }) => setAuthor(target.value)}
+            value={password}
+            onChange={({ target }) => setPassword(target.value)}
           />
-          <TextField
-            label="Year Published"
-            size="small"
-            type="number"
-            value={published}
-            onChange={({ target }) => setPublished(target.value)}
-          />
-          <Stack direction="row" spacing={1}>
-            <TextField
-              label="Genre"
-              size="small"
-              value={genre}
-              onChange={({ target }) => setGenre(target.value)}
-            />
-            <Button onClick={addGenre} type="button" variant="contained">
-              Add Genre
-            </Button>
-          </Stack>
-          <Typography variant="body1">Genres:</Typography>
-          <Grid container spacing={0.2}>
-            {genres.map((genre) => (
-              <Chip key={genre} label={genre} />
-            ))}
-          </Grid>
           <Button type="submit" variant="contained">
-            Create Book
+            Login
           </Button>
         </Stack>
       </form>
     </div>
   );
-};
-
-const Login = () => {
-  const [login] = useMutation(loginMutation);
 };
 
 export default Login;
