@@ -9,10 +9,16 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Stack,
+  ToggleButtonGroup,
+  ToggleButton,
 } from "@mui/material";
+import { useState } from "react";
 
 const BookList = () => {
   const { loading, error, data } = useQuery(booksQuery);
+
+  const [filter, setFilter] = useState();
 
   if (loading)
     return (
@@ -26,9 +32,28 @@ const BookList = () => {
 
   const books = data.allBooks;
 
+  const genresMap = books.reduce((allGenres, book) => {
+    book.genres.forEach((genre) => allGenres.add(genre));
+    return allGenres;
+  }, new Set());
+
+  const genres = Array.from(genresMap);
+
+  const handleFilter = (event, newFilter) => setFilter(newFilter);
+
+  const filteredBooks = books.filter(
+    (book) => book.genres.includes(filter) || filter === null
+  );
+
   return (
-    <div>
+    <Stack spacing={1}>
       <Typography variant="h3">Books</Typography>
+
+      <ToggleButtonGroup exclusive value={filter} onChange={handleFilter}>
+        {genres.map((genre) => (
+          <ToggleButton value={genre}>{genre}</ToggleButton>
+        ))}
+      </ToggleButtonGroup>
 
       <TableContainer component={Paper}>
         <Table>
@@ -40,7 +65,7 @@ const BookList = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {books.map((a) => (
+            {filteredBooks.map((a) => (
               <TableRow key={a.title}>
                 <TableCell>{a.title}</TableCell>
                 <TableCell>{a.author.name}</TableCell>
@@ -50,7 +75,7 @@ const BookList = () => {
           </TableBody>
         </Table>
       </TableContainer>
-    </div>
+    </Stack>
   );
 };
 
