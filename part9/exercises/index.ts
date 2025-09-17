@@ -8,11 +8,15 @@ app.get("/hello", (_req, res) => {
 });
 
 app.get("/bmi", (req, res) => {
-  if (validateInputs([req.query.height, req.query.weight])) {
+  const height =
+    typeof req.query.height === "string" ? req.query.height : undefined;
+  const weight =
+    typeof req.query.weight === "string" ? req.query.weight : undefined;
+  if (validateInputs([height, weight])) {
     res.json({
-      height: req.query.height,
-      weight: req.query.weight,
-      bmi: calculateBmi(Number(req.query.height), Number(req.query.weight)),
+      height,
+      weight,
+      bmi: calculateBmi(Number(height), Number(weight)),
     });
   } else {
     res.json({ error: "malformatted parameters" });

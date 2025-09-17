@@ -7,7 +7,7 @@ const calculateBmi = (height: number, weight: number): string => {
   return "Normal range";
 };
 
-const validateInputs = (inputs: any[]): boolean => {
+const validateInputs = (inputs: Array<string | undefined>): boolean => {
   if (inputs.length !== 2 || isNotNumber(inputs[0]) || isNotNumber(inputs[1])) {
     return false;
   } else {
@@ -16,10 +16,12 @@ const validateInputs = (inputs: any[]): boolean => {
 };
 
 if (require.main === module) {
-  const rawInputs: any[] = process.argv.slice(2);
+  const rawInputs: Array<string | undefined> = process.argv.slice(2);
 
   if (validateInputs(rawInputs)) {
-    const typedInputs: number[] = rawInputs.map((input: any) => Number(input));
+    const typedInputs: number[] = rawInputs.map((input: string) =>
+      Number(input)
+    );
     console.log(calculateBmi(typedInputs[0], typedInputs[1]));
   } else {
     console.log("Usage: 'npm run bmiCalculator <height (cm)> <weight (kg)>'.");

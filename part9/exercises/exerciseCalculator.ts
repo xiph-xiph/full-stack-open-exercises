@@ -50,7 +50,7 @@ const calculateExercises = (
   };
 };
 
-const validateInputs = (inputs: any[]): boolean => {
+const validateInputs = (inputs: string[]): boolean => {
   if (inputs.length < 4) return false;
   for (const input of inputs.slice(2)) {
     if (isNotNumber(input)) {
@@ -60,10 +60,10 @@ const validateInputs = (inputs: any[]): boolean => {
   return true;
 };
 
-const rawInputs: any[] = process.argv;
+const rawInputs: string[] = process.argv;
 
 if (validateInputs(rawInputs)) {
-  const typedInputs: number[] = rawInputs.map((input: any) => Number(input));
+  const typedInputs: number[] = rawInputs.map((input: string) => Number(input));
   console.log(calculateExercises(typedInputs.slice(3), typedInputs[2]));
 } else {
   console.log(
