@@ -1,3 +1,5 @@
+import { isNotNumber } from "./utils";
+
 interface Result {
   totalDays: number;
   totalTrainingDays: number;
@@ -48,4 +50,23 @@ const calculateExercises = (
   };
 };
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2));
+const validateInputs = (inputs: any[]): boolean => {
+  if (inputs.length < 4) return false;
+  inputs.slice(2).forEach((a) => {
+    if (isNotNumber(a)) {
+      return false;
+    }
+  });
+  return true;
+};
+
+const rawInputs: any[] = process.argv;
+
+if (validateInputs(rawInputs)) {
+  const typedInputs: number[] = rawInputs.map((input: any) => Number(input));
+  console.log(calculateExercises(typedInputs.slice(3), typedInputs[2]));
+} else {
+  console.log(
+    "Usage: 'npm run calculateExercises -- <target> <day1> <day2> ...'."
+  );
+}
