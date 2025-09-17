@@ -8,17 +8,22 @@ const calculateBmi = (height: number, weight: number): string => {
 };
 
 const validateInputs = (inputs: any[]): boolean => {
-  if (inputs.length !== 4 || isNotNumber(inputs[2]) || isNotNumber(inputs[3])) {
+  if (inputs.length !== 2 || isNotNumber(inputs[0]) || isNotNumber(inputs[1])) {
     return false;
   } else {
     return true;
   }
 };
-const rawInputs: any[] = process.argv;
 
-if (validateInputs(rawInputs)) {
-  const typedInputs: number[] = rawInputs.map((input: any) => Number(input));
-  console.log(calculateBmi(typedInputs[2], typedInputs[3]));
-} else {
-  console.log("Usage: 'npm run bmiCalculator <height (cm)> <weight (kg)>'.");
+if (require.main === module) {
+  const rawInputs: any[] = process.argv.slice(2);
+
+  if (validateInputs(rawInputs)) {
+    const typedInputs: number[] = rawInputs.map((input: any) => Number(input));
+    console.log(calculateBmi(typedInputs[0], typedInputs[1]));
+  } else {
+    console.log("Usage: 'npm run bmiCalculator <height (cm)> <weight (kg)>'.");
+  }
 }
+
+export { calculateBmi, validateInputs };

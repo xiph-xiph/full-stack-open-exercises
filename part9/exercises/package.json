@@ -4,13 +4,12 @@
   "description": "",
   "license": "MIT",
   "author": "",
-  "type": "module",
   "main": "index.js",
   "scripts": {
     "calculateBmi": "tsx ./bmiCalculator.ts",
     "calculateExercises": "tsx ./exerciseCalculator.ts",
     "start": "tsx ./index.ts",
-    "dev": "tsx watch ./index.ts"
+    "dev": "tsx --inspect=9229 --watch ./index.ts"
   },
   "dependencies": {
     "acorn": "^8.15.0",
