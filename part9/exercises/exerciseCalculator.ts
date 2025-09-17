@@ -51,8 +51,8 @@ const calculateExercises = (
 };
 
 const validateInputs = (inputs: string[]): boolean => {
-  if (inputs.length < 4) return false;
-  for (const input of inputs.slice(2)) {
+  if (inputs.length < 2) return false;
+  for (const input of inputs) {
     if (isNotNumber(input)) {
       return false;
     }
@@ -60,13 +60,19 @@ const validateInputs = (inputs: string[]): boolean => {
   return true;
 };
 
-const rawInputs: string[] = process.argv;
+if (require.main === module) {
+  const rawInputs: string[] = process.argv.slice(2);
 
-if (validateInputs(rawInputs)) {
-  const typedInputs: number[] = rawInputs.map((input: string) => Number(input));
-  console.log(calculateExercises(typedInputs.slice(3), typedInputs[2]));
-} else {
-  console.log(
-    "Usage: 'npm run calculateExercises -- <target> <day1> <day2> ...'."
-  );
+  if (validateInputs(rawInputs)) {
+    const typedInputs: number[] = rawInputs.map((input: string) =>
+      Number(input)
+    );
+    console.log(calculateExercises(typedInputs.slice(1), typedInputs[0]));
+  } else {
+    console.log(
+      "Usage: 'npm run calculateExercises -- <target> <day1> <day2> ...'."
+    );
+  }
 }
+
+export { calculateExercises };
