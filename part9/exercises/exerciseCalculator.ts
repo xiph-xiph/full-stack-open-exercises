@@ -52,11 +52,11 @@ const calculateExercises = (
 
 const validateInputs = (inputs: any[]): boolean => {
   if (inputs.length < 4) return false;
-  inputs.slice(2).forEach((a) => {
-    if (isNotNumber(a)) {
+  for (const input of inputs.slice(2)) {
+    if (isNotNumber(input)) {
       return false;
     }
-  });
+  }
   return true;
 };
 
