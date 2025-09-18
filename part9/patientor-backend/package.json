@@ -4,7 +4,6 @@
   "description": "",
   "license": "MIT",
   "author": "Pjotr Zwartenkot",
-  "type": "module",
   "main": "index.ts",
   "scripts": {
     "build": "tsc",

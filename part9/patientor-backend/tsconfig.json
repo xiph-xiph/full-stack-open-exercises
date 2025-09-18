@@ -7,10 +7,11 @@
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
-    "module": "nodenext",
-    "target": "esnext",
-    "lib": ["esnext"],
+    "module": "commonjs",
+    "target": "ES6",
     "types": ["node"],
+    "esModuleInterop": true,
+    
     // Other Outputs
     "sourceMap": true,
     "declaration": true,
@@ -30,12 +31,6 @@
 
     // Recommended Options
     "strict": true,
-    "jsx": "react-jsx",
-    "verbatimModuleSyntax": true,
-    "isolatedModules": true,
-    "noUncheckedSideEffectImports": true,
-    "moduleDetection": "force",
-    "skipLibCheck": true
   },
   "exclude": [
     "node_modules",
