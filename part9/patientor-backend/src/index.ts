@@ -7,6 +7,7 @@ import patientRouter from "./routers/patientRouter";
 const app = express();
 
 app.use(cors());
+app.use(express.json());
 app.use("/api/ping", pingRouter);
 app.use("/api/diagnoses", diagnosisRouter);
 app.use("/api/patients", patientRouter);

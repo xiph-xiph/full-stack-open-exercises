@@ -1,7 +1,7 @@
 import patientData from "../data/patients";
 import { Patient, PatientNonSensitive } from "../types";
 
-const getEntries = (): Patient[] => {
+const getSensitiveEntries = (): Patient[] => {
   return patientData;
 };
 
@@ -14,4 +14,17 @@ const getNonSensitiveEntries = (): PatientNonSensitive[] => {
   });
 };
 
-export default { getEntries, getNonSensitiveEntries };
+const addPatient = (newPatient: Patient): PatientNonSensitive => {
+  patientData.push(newPatient);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { ssn, ...newPatientNonSensitive } = newPatient;
+
+  return newPatientNonSensitive;
+};
+
+export default {
+  getSensitiveEntries,
+  getNonSensitiveEntries,
+  addPatient,
+};
