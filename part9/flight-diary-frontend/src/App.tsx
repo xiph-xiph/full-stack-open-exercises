@@ -3,6 +3,7 @@ import diaryService from "./services/diaryService";
 import DiaryList from "./components/DiaryList";
 import NewEntryForm from "./components/NewEntryForm";
 import type { Diary } from "./types";
+import { Stack } from "@mui/material";
 
 function App() {
   const [diaries, setDiaries] = useState<Array<Diary>>([]);
@@ -14,10 +15,10 @@ function App() {
     })();
   }, []);
   return (
-    <>
+    <Stack spacing={1}>
       <NewEntryForm addDiary={addDiary} />
       <DiaryList diaries={diaries} />
-    </>
+    </Stack>
   );
 }
 

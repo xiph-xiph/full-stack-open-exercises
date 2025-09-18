@@ -1,7 +1,8 @@
-import { Button, Stack, TextField, Typography } from "@mui/material";
+import { Alert, Button, Stack, TextField, Typography } from "@mui/material";
 import { useState, type FormEvent } from "react";
 import diaryService from "../services/diaryService";
 import type { NewDiary, Diary } from "../types";
+import { isAxiosError } from "axios";
 
 interface NewEntryFormProps {
   addDiary: (diary: Diary) => void;
@@ -13,24 +14,33 @@ const NewEntryForm = ({ addDiary }: NewEntryFormProps) => {
   const [weather, setWeather] = useState("");
   const [comment, setComment] = useState("");
 
+  const [errorNotif, setErrorNotif] = useState("");
+
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    const addedDiary = await diaryService.addNew({
-      date,
-      visibility,
-      weather,
-      comment,
-    } as NewDiary);
-    addDiary(addedDiary);
-    setDate("");
-    setVisibility("");
-    setWeather("");
-    setComment("");
+    try {
+      const addedDiary = await diaryService.addNew({
+        date,
+        visibility,
+        weather,
+        comment,
+      } as NewDiary);
+      addDiary(addedDiary);
+      setDate("");
+      setVisibility("");
+      setWeather("");
+      setComment("");
+    } catch (error) {
+      if (isAxiosError<string>(error) && error.response?.data) {
+        setErrorNotif(error.response?.data);
+      }
+    }
   };
 
   return (
     <>
       <Typography variant="h3">Add new entry</Typography>
+      {errorNotif ? <Alert severity="error">{errorNotif}</Alert> : null}
       <form onSubmit={handleSubmit}>
         <Stack spacing={1} alignItems="baseline">
           <TextField
