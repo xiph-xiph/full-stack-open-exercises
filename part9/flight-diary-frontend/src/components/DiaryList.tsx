@@ -1,16 +1,11 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
 import { Stack, Typography } from "@mui/material";
 import type { Diary } from "../types";
 
-const DiaryList = () => {
-  const [diaries, setDiaries] = useState<Array<Diary>>([]);
+interface DiaryListProps {
+  diaries: Array<Diary>;
+}
 
-  useEffect(() => {
-    axios
-      .get<Diary[]>("http://localhost:3000/api/diaries")
-      .then((response) => setDiaries(response.data));
-  }, []);
+const DiaryList = ({ diaries }: DiaryListProps) => {
   return (
     <Stack spacing={2}>
       <Typography variant="h3">Diary entries</Typography>
