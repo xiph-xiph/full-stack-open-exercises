@@ -1,7 +1,9 @@
 import express from "express";
 import patientService from "../services/patientService";
-import { Response } from "express";
-import { PatientNonSensitive, ErrorResponse } from "../types";
+import { Request, Response, NextFunction } from "express";
+import { PatientNonSensitive, ErrorResponse, NewPatient } from "../types";
+import { v1 as uuid } from "uuid";
+import { ZodError } from "zod";
 
 const router = express.Router();
 
@@ -9,17 +11,36 @@ router.get("/", (_req, res: Response<PatientNonSensitive[]>) => {
   res.json(patientService.getNonSensitiveEntries());
 });
 
-router.post("/", (req, res: Response<PatientNonSensitive | ErrorResponse>) => {
-  const patientToAdd: unknown = req.body;
-  if (!patientService.validateNewPatient(patientToAdd)) {
-    console.log(req.body);
-    return res.status(400).json({ error: "invalid request" });
+const newPatientParser = (req: Request, _res: Response, next: NextFunction) => {
+  try {
+    patientService.parseNewPatient(req.body);
+    next();
+  } catch (error: unknown) {
+    next(error);
   }
+};
 
-  const newPatient = patientService.addPatient(
-    patientService.convertToPatient(patientToAdd),
-  );
-  return res.json(patientService.convertToPatientNonSensitive(newPatient));
-});
+router.post(
+  "/",
+  newPatientParser,
+  (
+    req: Request<unknown, unknown, NewPatient>,
+    res: Response<PatientNonSensitive | ErrorResponse>,
+  ) => {
+    const newPatient = req.body;
+
+    try {
+      const patient = { ...newPatient, id: uuid() };
+      patientService.addPatient(patient);
+      res.json(patientService.parsePatientNonSensitive(patient));
+    } catch (error: unknown) {
+      if (error instanceof ZodError) {
+        res.status(400).send({ error: JSON.stringify(error.issues) });
+      } else {
+        res.status(400).send({ error: "unknown error" });
+      }
+    }
+  },
+);
 
 export default router;
