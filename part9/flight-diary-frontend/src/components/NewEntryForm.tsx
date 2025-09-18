@@ -1,6 +1,17 @@
-import { Alert, Button, Stack, TextField, Typography } from "@mui/material";
+import {
+  Alert,
+  Button,
+  FormControlLabel,
+  FormLabel,
+  Radio,
+  RadioGroup,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useState, type FormEvent } from "react";
 import diaryService from "../services/diaryService";
+import { visibilityOptions, weatherOptions } from "../types";
 import type { NewDiary, Diary } from "../types";
 import { isAxiosError } from "axios";
 
@@ -44,26 +55,52 @@ const NewEntryForm = ({ addDiary }: NewEntryFormProps) => {
       <form onSubmit={handleSubmit}>
         <Stack spacing={1} alignItems="baseline">
           <TextField
+            type="date"
             variant="outlined"
             label="Date"
             size="small"
             value={date}
             onChange={(event) => setDate(event.target.value)}
+            slotProps={{
+              inputLabel: {
+                shrink: true,
+              },
+            }}
           />
-          <TextField
-            variant="outlined"
-            label="Visibility"
-            size="small"
-            value={visibility}
-            onChange={(event) => setVisibility(event.target.value)}
-          />
-          <TextField
-            variant="outlined"
-            label="Weather"
-            size="small"
-            value={weather}
-            onChange={(event) => setWeather(event.target.value)}
-          />
+          <div>
+            <FormLabel>Visibility</FormLabel>
+            <RadioGroup
+              row
+              defaultValue="good"
+              value={visibility}
+              onChange={(event) => setVisibility(event.target.value)}
+            >
+              {visibilityOptions.map((visibility) => (
+                <FormControlLabel
+                  value={visibility}
+                  control={<Radio />}
+                  label={visibility}
+                />
+              ))}
+            </RadioGroup>
+          </div>
+          <div>
+            <FormLabel>Weather</FormLabel>
+            <RadioGroup
+              row
+              defaultValue="sunny"
+              value={weather}
+              onChange={(event) => setWeather(event.target.value)}
+            >
+              {weatherOptions.map((weather) => (
+                <FormControlLabel
+                  value={weather}
+                  control={<Radio />}
+                  label={weather}
+                />
+              ))}
+            </RadioGroup>
+          </div>
           <TextField
             variant="outlined"
             label="Comment"
