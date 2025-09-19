@@ -19,6 +19,15 @@ const getNonSensitiveEntries = (): PatientNonSensitive[] => {
   });
 };
 
+const getNonSensitiveById = (id: string): PatientNonSensitive | undefined => {
+  const foundPatient = patientData.find((patient) => patient.id === id);
+  if (foundPatient) {
+    return parsePatientNonSensitive(foundPatient);
+  } else {
+    return undefined;
+  }
+};
+
 const parseNewPatient = (patient: unknown): NewPatient =>
   NewPatientSchema.parse(patient);
 
@@ -34,14 +43,15 @@ const addPatient = (patient: Patient): Patient => {
 };
 
 const patientData: Patient[] = rawPatientData.map(
-  (patient: object): Patient => parsePatient(patient),
+  (patient: object): Patient => parsePatient({ ...patient, entries: [] }),
 );
 
 export default {
   getSensitiveEntries,
   getNonSensitiveEntries,
+  getNonSensitiveById,
   parseNewPatient,
-  // parsePatient,
+  parsePatient,
   parsePatientNonSensitive,
   addPatient,
 };

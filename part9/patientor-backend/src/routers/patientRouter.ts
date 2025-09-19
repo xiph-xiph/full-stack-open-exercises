@@ -11,6 +11,15 @@ router.get("/", (_req, res: Response<PatientNonSensitive[]>) => {
   res.json(patientService.getNonSensitiveEntries());
 });
 
+router.get("/:id", (req, res) => {
+  const foundPatient = patientService.getNonSensitiveById(req.params.id);
+  if (foundPatient) {
+    res.json(foundPatient);
+  } else {
+    res.json({ error: `could not find patient with id ${req.params.id}` });
+  }
+});
+
 const newPatientParser = (req: Request, _res: Response, next: NextFunction) => {
   try {
     patientService.parseNewPatient(req.body);
