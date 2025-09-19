@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import type { Patient } from "../../types";
+import type { Diagnosis, Patient } from "../../types";
 import {
   Box,
   List,
@@ -14,9 +14,13 @@ import PersonIcon from "@mui/icons-material/Person";
 
 interface PatientDetailsPageProps {
   patients: Array<Patient>;
+  diagnoses: Array<Diagnosis>;
 }
 
-const PatientDetailsPage = ({ patients }: PatientDetailsPageProps) => {
+const PatientDetailsPage = ({
+  patients,
+  diagnoses,
+}: PatientDetailsPageProps) => {
   const { id } = useParams();
   const patient = patients.find((patient) => patient.id === id);
   if (!patient) {
@@ -52,7 +56,12 @@ const PatientDetailsPage = ({ patients }: PatientDetailsPageProps) => {
                   {entry.diagnosisCodes
                     ? entry.diagnosisCodes.map((diagnosisCode) => (
                         <ListItem>
-                          <ListItemText primary={`- ${diagnosisCode}`} />
+                          <ListItemText
+                            primary={`- ${diagnosisCode}: ${
+                              diagnoses.find((d) => diagnosisCode === d.code)
+                                ?.name
+                            }`}
+                          />
                         </ListItem>
                       ))
                     : null}
