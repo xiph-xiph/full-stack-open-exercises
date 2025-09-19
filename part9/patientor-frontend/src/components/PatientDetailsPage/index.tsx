@@ -1,6 +1,13 @@
 import { useParams } from "react-router-dom";
 import type { Patient } from "../../types";
-import { Box, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  List,
+  ListItem,
+  ListItemText,
+  Stack,
+  Typography,
+} from "@mui/material";
 import MaleIcon from "@mui/icons-material/Male";
 import FemaleIcon from "@mui/icons-material/Female";
 import PersonIcon from "@mui/icons-material/Person";
@@ -34,6 +41,26 @@ const PatientDetailsPage = ({ patients }: PatientDetailsPageProps) => {
         <Typography variant="body1">
           Occupation: {patient.occupation}
         </Typography>
+        {patient.entries ? (
+          <Stack spacing={1}>
+            <Typography variant="h5">Entries</Typography>
+            {patient.entries.map((entry) => (
+              <>
+                <Typography variant="body1">{entry.date}</Typography>
+                <Typography variant="body1">{entry.description}</Typography>
+                <List>
+                  {entry.diagnosisCodes
+                    ? entry.diagnosisCodes.map((diagnosisCode) => (
+                        <ListItem>
+                          <ListItemText primary={`- ${diagnosisCode}`} />
+                        </ListItem>
+                      ))
+                    : null}
+                </List>
+              </>
+            ))}
+          </Stack>
+        ) : null}
       </Box>
     </div>
   );
