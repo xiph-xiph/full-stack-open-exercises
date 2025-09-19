@@ -27,9 +27,9 @@ const HospitalEntry = ({ entry, diagnoses }: HospitalEntryProps) => {
       <List>
         {diagnoses
           ? diagnoses.map((diagnosis) => (
-              <ListItem key={diagnosis.code}>
+              <ListItem key={diagnosis?.code}>
                 <ListItemText
-                  primary={`- ${diagnosis.code} ${diagnosis.name}`}
+                  primary={`- ${diagnosis?.code} ${diagnosis?.name}`}
                 />
               </ListItem>
             ))
