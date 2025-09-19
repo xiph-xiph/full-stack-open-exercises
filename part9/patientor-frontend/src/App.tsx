@@ -3,7 +3,7 @@ import axios from "axios";
 import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
 import { Button, Divider, Container, Typography } from "@mui/material";
 import { apiBaseUrl } from "./constants";
-import { Diagnosis, Patient } from "./types";
+import { Diagnosis, Entry, Patient } from "./types";
 import patientService from "./services/patients";
 
 import PatientListPage from "./components/PatientListPage";
@@ -25,6 +25,16 @@ const App = () => {
     };
     void fetchPatientsAndDiagnoses();
   }, []);
+
+  const addEntry = (entry: Entry, id: Patient["id"]) => {
+    setPatients(
+      patients.map((patient) =>
+        patient.id === id
+          ? { ...patient, entries: patient.entries?.concat(entry) }
+          : patient
+      )
+    );
+  };
 
   return (
     <div className="App">
@@ -50,7 +60,11 @@ const App = () => {
             <Route
               path="/patients/:id"
               element={
-                <PatientDetailsPage diagnoses={diagnoses} patients={patients} />
+                <PatientDetailsPage
+                  diagnoses={diagnoses}
+                  patients={patients}
+                  addEntry={addEntry}
+                />
               }
             />
           </Routes>

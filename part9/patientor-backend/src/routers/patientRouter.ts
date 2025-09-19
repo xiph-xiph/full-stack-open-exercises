@@ -70,10 +70,13 @@ const newEntryParser = (req: Request, _res: Response, next: NextFunction) => {
 
 router.post("/:id/entries", newEntryParser, (req, res) => {
   const newEntry: NewEntry = req.body;
-
   try {
     const entry = patientService.parseEntry({ ...newEntry, id: uuid() });
-    patientService.addEntryToPatient(entry, req.params["id"]);
+    const addedEntry = patientService.addEntryToPatient(
+      entry,
+      req.params["id"],
+    );
+    res.json(addedEntry);
   } catch (error: unknown) {
     if (error instanceof ZodError) {
       res.status(400).send({ error: JSON.stringify(error.issues) });
