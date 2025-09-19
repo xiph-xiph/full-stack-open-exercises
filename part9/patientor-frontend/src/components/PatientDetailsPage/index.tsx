@@ -1,16 +1,10 @@
 import { useParams } from "react-router-dom";
 import type { Diagnosis, Patient } from "../../types";
-import {
-  Box,
-  List,
-  ListItem,
-  ListItemText,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import MaleIcon from "@mui/icons-material/Male";
 import FemaleIcon from "@mui/icons-material/Female";
 import PersonIcon from "@mui/icons-material/Person";
+import Entry from "./Entry";
 
 interface PatientDetailsPageProps {
   patients: Array<Patient>;
@@ -49,24 +43,7 @@ const PatientDetailsPage = ({
           <Stack spacing={1}>
             <Typography variant="h5">Entries</Typography>
             {patient.entries.map((entry) => (
-              <>
-                <Typography variant="body1">{entry.date}</Typography>
-                <Typography variant="body1">{entry.description}</Typography>
-                <List>
-                  {entry.diagnosisCodes
-                    ? entry.diagnosisCodes.map((diagnosisCode) => (
-                        <ListItem>
-                          <ListItemText
-                            primary={`- ${diagnosisCode}: ${
-                              diagnoses.find((d) => diagnosisCode === d.code)
-                                ?.name
-                            }`}
-                          />
-                        </ListItem>
-                      ))
-                    : null}
-                </List>
-              </>
+              <Entry key={entry.id} entry={entry} allDiagnoses={diagnoses} />
             ))}
           </Stack>
         ) : null}
