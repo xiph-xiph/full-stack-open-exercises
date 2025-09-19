@@ -17,8 +17,8 @@ Each part of the course has its own folder:
 - `part4` – Testing Express servers, user management
 - `part5` – React app state management
 - `part6` – Advanced state management (Redux)
-- `part7` – React Query, Context, and more - **WIP**
-- `part8` – GraphQL - **WIP**
+- `part7` – React Query, Context, and more
+- `part8` – GraphQL
 - `part9` – TypeScript - **WIP**
 
 ## How to Run

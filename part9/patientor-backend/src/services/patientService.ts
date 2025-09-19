@@ -43,7 +43,7 @@ const addPatient = (patient: Patient): Patient => {
 };
 
 const patientData: Patient[] = rawPatientData.map(
-  (patient: object): Patient => parsePatient({ ...patient, entries: [] }),
+  (patient: object): Patient => parsePatient({ ...patient }),
 );
 
 export default {

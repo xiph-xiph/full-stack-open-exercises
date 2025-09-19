@@ -1,14 +1,18 @@
 import z from "zod";
+import { DiagnosisSchema } from "./schemas/diagnosisSchemas";
 import {
   NewPatientSchema,
   PatientSchema,
   PatientNonSensitiveSchema,
 } from "./schemas/patientSchemas";
 
-export interface Diagnosis {
-  code: string;
-  name: string;
-  latin?: string;
+export type Diagnosis = z.infer<typeof DiagnosisSchema>;
+
+export enum HealthCheckRating {
+  "Healthy" = 0,
+  "LowRisk" = 1,
+  "HighRisk" = 2,
+  "CriticalRisk" = 3,
 }
 
 export enum Gender {
