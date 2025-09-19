@@ -1,16 +1,20 @@
 import rawPatientData from "../data/patients";
-import { NewPatient, Patient, PatientNonSensitive } from "../types";
+
+import { EntrySchema, NewEntrySchema } from "../schemas/entrySchemas";
 import {
   NewPatientSchema,
   PatientSchema,
   PatientNonSensitiveSchema,
 } from "../schemas/patientSchemas";
+import {
+  NewEntry,
+  Entry,
+  NewPatient,
+  Patient,
+  PatientNonSensitive,
+} from "../types";
 
-const getSensitiveEntries = (): Patient[] => {
-  return patientData;
-};
-
-const getNonSensitiveEntries = (): PatientNonSensitive[] => {
+const getNonSensitivePatientEntries = (): PatientNonSensitive[] => {
   return patientData.map((patient) => {
     return {
       ...patient,
@@ -19,7 +23,9 @@ const getNonSensitiveEntries = (): PatientNonSensitive[] => {
   });
 };
 
-const getNonSensitiveById = (id: string): PatientNonSensitive | undefined => {
+const getNonSensitivePatientsById = (
+  id: string,
+): PatientNonSensitive | undefined => {
   const foundPatient = patientData.find((patient) => patient.id === id);
   if (foundPatient) {
     return parsePatientNonSensitive(foundPatient);
@@ -42,16 +48,33 @@ const addPatient = (patient: Patient): Patient => {
   return patient;
 };
 
+const parseNewEntry = (entry: unknown): NewEntry => NewEntrySchema.parse(entry);
+
+const parseEntry = (entry: unknown): Entry => EntrySchema.parse(entry);
+
+const addEntryToPatient = (
+  entry: Entry,
+  patientId: string | undefined,
+): Entry | undefined => {
+  const patient = patientData.find((patient) => patient.id === patientId);
+  if (!patient) {
+    return undefined;
+  }
+  patient.entries.push(entry);
+  return entry;
+};
+
 const patientData: Patient[] = rawPatientData.map(
   (patient: object): Patient => parsePatient({ ...patient }),
 );
 
 export default {
-  getSensitiveEntries,
-  getNonSensitiveEntries,
-  getNonSensitiveById,
+  getNonSensitivePatientEntries,
+  getNonSensitivePatientsById,
   parseNewPatient,
-  parsePatient,
   parsePatientNonSensitive,
   addPatient,
+  parseNewEntry,
+  parseEntry,
+  addEntryToPatient,
 };

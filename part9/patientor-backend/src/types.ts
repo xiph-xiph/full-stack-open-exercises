@@ -1,5 +1,6 @@
 import z from "zod";
 import { DiagnosisSchema } from "./schemas/diagnosisSchemas";
+import { EntrySchema, NewEntrySchema } from "./schemas/entrySchemas";
 import {
   NewPatientSchema,
   PatientSchema,
@@ -20,6 +21,10 @@ export enum Gender {
   Female = "female",
   Other = "other",
 }
+
+export type Entry = z.infer<typeof EntrySchema>;
+
+export type NewEntry = z.infer<typeof NewEntrySchema>;
 
 export type Patient = z.infer<typeof PatientSchema>;
 
