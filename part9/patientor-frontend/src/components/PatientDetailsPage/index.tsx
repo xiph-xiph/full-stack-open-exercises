@@ -57,6 +57,7 @@ const PatientDetailsPage = ({
             addEntry(entry, id);
           }}
           patientId={id}
+          allDiagnoses={diagnoses}
         />
         <Button variant="contained" sx={{ mt: 2 }} onClick={() => openModal()}>
           Add New Entry

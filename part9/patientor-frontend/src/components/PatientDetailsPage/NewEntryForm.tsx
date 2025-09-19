@@ -16,8 +16,16 @@ import {
   FormControl,
   FormControlLabel,
   Switch,
+  Input,
+  Box,
 } from "@mui/material";
-import { Entry, HealthCheckRating, NewEntry, Patient } from "../../types";
+import {
+  Diagnosis,
+  Entry,
+  HealthCheckRating,
+  NewEntry,
+  Patient,
+} from "../../types";
 import patientService from "../../services/patients";
 
 interface NewEntryFormProps {
@@ -25,6 +33,7 @@ interface NewEntryFormProps {
   onClose: () => void;
   addEntry: (entry: Entry) => void;
   patientId: Patient["id"];
+  allDiagnoses: Array<Diagnosis>;
 }
 
 const NewEntryForm = ({
@@ -32,14 +41,19 @@ const NewEntryForm = ({
   onClose,
   addEntry,
   patientId,
+  allDiagnoses,
 }: NewEntryFormProps) => {
   const [error, setError] = useState("");
-
   const allEntryTypes: Array<Entry["type"]> = [
     "HealthCheck",
     "Hospital",
     "OccupationalHealthcare",
   ];
+
+  const allHealthCheckRatings = Object.keys(HealthCheckRating).filter((key) =>
+    isNaN(Number(key))
+  );
+
   const [entryType, setEntryType] = useState<Entry["type"]>("HealthCheck");
 
   const [description, setDescription] = useState("");
@@ -103,7 +117,7 @@ const NewEntryForm = ({
   };
 
   return (
-    <Dialog fullWidth={true} open={modalOpen} onClose={() => onClose()}>
+    <Dialog fullWidth open={modalOpen} onClose={() => onClose()}>
       <DialogTitle>Add a new entry</DialogTitle>
       <Divider />
       <DialogContent>
@@ -126,52 +140,66 @@ const NewEntryForm = ({
             </FormControl>
             <TextField
               label="Description"
-              fullWidth
               value={description}
               onChange={(event) => setDescription(event.target.value)}
             />
-            <TextField
-              label="Date"
-              placeholder="YYYY-MM-DD"
-              fullWidth
+            <InputLabel>Date</InputLabel>
+            <Input
+              type="date"
               value={date}
               onChange={(event) => setDate(event.target.value)}
             />
             <TextField
               label="Specialist"
-              fullWidth
               value={specialist}
               onChange={(event) => setSpecialist(event.target.value)}
             />
-            <TextField
-              label="Diagnosis Codes (comma-separated)"
-              fullWidth
-              value={diagnosisCodes.join(",")}
-              onChange={(event) =>
-                setDiagnosisCodes(event.target.value.split(","))
-              }
-            />
+            <FormControl>
+              <InputLabel>Diagnosis Codes</InputLabel>
+              <Select
+                label="Diagnosis Codes"
+                multiple
+                value={diagnosisCodes}
+                onChange={(event) => {
+                  setDiagnosisCodes(event.target.value as string[]);
+                }}
+              >
+                {allDiagnoses.map((diagnosis) => (
+                  <MenuItem key={diagnosis.code} value={diagnosis.code}>
+                    {diagnosis.code}: {diagnosis.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
 
             {entryType === "HealthCheck" ? (
-              <TextField
-                label="Health Check Rating"
-                type="number"
-                fullWidth
-                value={healthCheckRating}
-                onChange={(event) => {
-                  const value = Number(event.target.value);
-                  if (Object.values(HealthCheckRating).includes(value)) {
-                    setHealthCheckRating(value as HealthCheckRating);
-                  }
-                }}
-              />
+              <FormControl>
+                <InputLabel>Health Check Rating</InputLabel>
+                <Select
+                  label="Health Check Rating"
+                  value={healthCheckRating}
+                  onChange={(event) => setHealthCheckRating(event.target.value)}
+                >
+                  {allHealthCheckRatings.map((name) => (
+                    <MenuItem
+                      key={name}
+                      value={
+                        HealthCheckRating[
+                          name as keyof typeof HealthCheckRating
+                        ]
+                      }
+                    >
+                      {name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             ) : null}
 
             {entryType === "OccupationalHealthcare" ? (
               <>
                 <TextField
                   label="Employer Name"
-                  fullWidth
                   value={employerName}
                   onChange={(event) => {
                     setEmployerName(event.target.value);
@@ -189,24 +217,28 @@ const NewEntryForm = ({
                 {hasSickLeave ? (
                   <>
                     <Stack direction="row" spacing={1}>
-                      <TextField
-                        label="Start Date"
-                        placeholder="YYYY-MM-DD"
-                        fullWidth
-                        value={sickLeaveStartDate}
-                        onChange={(event) => {
-                          setSickLeaveStartDate(event.target.value);
-                        }}
-                      />
-                      <TextField
-                        label="End Date"
-                        placeholder="YYYY-MM-DD"
-                        fullWidth
-                        value={sickLeaveEndDate}
-                        onChange={(event) => {
-                          setSickLeaveEndDate(event.target.value);
-                        }}
-                      />
+                      <Box sx={{ width: "100%" }}>
+                        <InputLabel>Start Date</InputLabel>
+                        <Input
+                          fullWidth
+                          type="date"
+                          value={sickLeaveStartDate}
+                          onChange={(event) => {
+                            setSickLeaveStartDate(event.target.value);
+                          }}
+                        />
+                      </Box>
+                      <Box sx={{ width: "100%" }}>
+                        <InputLabel>End Date</InputLabel>
+                        <Input
+                          fullWidth
+                          type="date"
+                          value={sickLeaveEndDate}
+                          onChange={(event) => {
+                            setSickLeaveEndDate(event.target.value);
+                          }}
+                        />
+                      </Box>
                     </Stack>
                   </>
                 ) : null}
@@ -215,10 +247,8 @@ const NewEntryForm = ({
 
             {entryType === "Hospital" ? (
               <>
-                <TextField
-                  label="Discharge Date"
-                  placeholder="YYYY-MM-DD"
-                  fullWidth
+                <Input
+                  type="date"
                   value={dischargeDate}
                   onChange={(event) => {
                     setDischargeDate(event.target.value);
@@ -226,7 +256,6 @@ const NewEntryForm = ({
                 />
                 <TextField
                   label="Discharge Criteria"
-                  fullWidth
                   value={dischargeCriteria}
                   onChange={(event) => {
                     setDischargeCriteria(event.target.value);
